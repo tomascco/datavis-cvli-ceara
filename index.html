@@ -1,25 +1,58 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crimes CVLI no Ceará</title>
 
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-  integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
-  crossorigin=""/>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crimes CVLI no Ceará</title>
 
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter2/1.5.4/crossfilter.min.js" integrity="sha512-YTblpiY3CE9zQBW//UMBfvDF2rz6bS7vhhT5zwzqQ8P7Z0ikBGG8hfcRwmmg3IuLl2Rwk95NJUEs1HCQD4EDKQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dc/4.2.7/dc.min.js" integrity="sha512-vIRU1/ofrqZ6nA3aOsDQf8kiJnAHnLrzaDh4ob8yBcJNry7Czhb8mdKIP+p8y7ixiNbT/As1Oii9IVk+ohSFiA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
-  integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
-  crossorigin=""></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+      integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+      crossorigin="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dc/4.2.7/style/dc.css"
+      integrity="sha512-ZCK4qcVpG4m3G6VG2CWs5Tl870Xn9xhT3SWJLmbsbTfU9/hzyZDeCzyLpjsCc27YxlDi19URyKlY+h4cQIifig=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
 
-  <script src="vis.js"></script>
-</head>
-<body>
-  <h1>Data vis</h1>
-</body>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter2/1.5.4/crossfilter.min.js"
+      integrity="sha512-YTblpiY3CE9zQBW//UMBfvDF2rz6bS7vhhT5zwzqQ8P7Z0ikBGG8hfcRwmmg3IuLl2Rwk95NJUEs1HCQD4EDKQ=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dc/4.2.7/dc.min.js"
+      integrity="sha512-vIRU1/ofrqZ6nA3aOsDQf8kiJnAHnLrzaDh4ob8yBcJNry7Czhb8mdKIP+p8y7ixiNbT/As1Oii9IVk+ohSFiA=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+      integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+      crossorigin=""></script>
+
+    <script src="crimes_location.js"></script>
+  </head>
+
+  <body>
+    <section class="hero is-danger is-fullheight">
+      <div class="hero-body">
+        <div class="container has-text-centered">
+          <h1 class="title">Crimes CVLI no Ceará</h1>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h1 class="title">Título</h1>
+      <h2 class="subtitle">Descrição</h2>
+      <div class="columns">
+        <div class="column is-half">
+          <div id="vitimas-sexo"></div>
+        </div>
+        <div class="column is-half">
+        </div>
+      </div>
+      <div class="columns">
+        <div class="column is-full">
+          dasdasmdal
+        </div>
+      </div>
+    </section>
+  </body>
 </html>
