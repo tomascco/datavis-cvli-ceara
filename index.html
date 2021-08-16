@@ -14,7 +14,6 @@
       integrity="sha512-ZCK4qcVpG4m3G6VG2CWs5Tl870Xn9xhT3SWJLmbsbTfU9/hzyZDeCzyLpjsCc27YxlDi19URyKlY+h4cQIifig=="
       crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
-
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter2/1.5.4/crossfilter.min.js"
       integrity="sha512-YTblpiY3CE9zQBW//UMBfvDF2rz6bS7vhhT5zwzqQ8P7Z0ikBGG8hfcRwmmg3IuLl2Rwk95NJUEs1HCQD4EDKQ=="
@@ -25,34 +24,94 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
       integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
       crossorigin=""></script>
-
+    <style type="text/css">
+    #ceara_map {
+        width: 600px;
+        height: 400px;
+    }
+    </style>
+    <style type="text/css">
+    #fortaleza_map {
+        width: 600px;
+        height: 400px;
+    }
+    </style>
     <script src="crimes_location.js"></script>
+    <script src="crime_maps.js"></script>
+    <script src="fortaleza_map.js"></script>
   </head>
 
   <body>
-    <section class="hero is-danger is-fullheight">
+    <section class="hero is-info is-fullheight">
       <div class="hero-body">
         <div class="container has-text-centered">
-          <h1 class="title">Crimes CVLI no Ceará</h1>
+          <h1 class="title">CVLI no Ceará em 2020</h1>
         </div>
+        <div class="column">
+          <div class="box">
+            "Entende-se por CVLI a soma de crimes de Homicídio
+            Doloso/Feminicídio, Lesão corporal seguida de morte e Roubo seguido de morte (Latrocínio). A quantidade será definida pela soma de todos os homicídios classificados como dolosos isto é, praticados voluntária ou intencionalmente, por qualquer instrumento ou meio, de todas as lesões intencionais que resultaram em morte e de todos os latrocínios praticados."
+          </div>
+        </div>
+    </div>
+
+    </section>
+    
+    <section class="section">
+      <h1 class="title">Visão Geral:</h1>
+      <h2 class="subtitle">Descrição</h2>
+       <div class="columns">
+        <div class="column is-half">
+          <h2 class="subtitle">Taxa de CVLI por município por 100.000 hab</h2>
+          <div id="ceara_map"></div>
+        </div>
+        <div class="column is-half">
+          <h2 class="subtitle">Distribuição das idades das vítimas</h2>
+          <div id="ceara_hist"></div></div>
       </div>
+      <div class="columns">
+        <div class="column is-half">
+         <div id="vitimas_mes"></div> 
+       </div>
+       <div class="column is-half">
+         <div id="head_id"></div> 
+       </div>
+     </div>
+    
     </section>
 
     <section class="section">
-      <h1 class="title">Título</h1>
+      <h1 class="title">Ocorrências por AIS</h1>
       <h2 class="subtitle">Descrição</h2>
-      <div class="columns">
-        <div class="column is-half">
-          <div id="vitimas-sexo"></div>
-        </div>
-        <div class="column is-half">
-        </div>
-      </div>
-      <div class="columns">
-        <div class="column is-full">
-          dasdasmdal
-        </div>
-      </div>
     </section>
+    
+  <section class="section">
+      <h1 class="title">Ocorrências por AIS: Fortaleza</h1>
+      <h2 class="subtitle">Descrição</h2>
+       <div class="columns">
+        <div class="column is-half"><div id="fortaleza_map"></div></div>
+        <div class="column is-half"><div id="bar_chart"></div></div>
+    </div>
+    </section>
+    <section class="section">
+      <h1 class="title">Distribuição das ocorrências de CVLI por sexo</h1>
+      <h2 class="subtitle">Descrição</h2>
+      <div class="columns"><div class="column is-full">
+      <div id="vitimas-sexo"></div></div>
+      </div>
+      <div class="columns">
+        <div class="column is-half"><div id="bar_homem"></div></div>
+        <div class="column is-half"><div id="bar_mulher"></div></div>
+      </div>
+      <div class="columns">
+        <div class="column is-half">
+          <div id="histogram_homem">
+            
+          </div>
+        </div>
+      <div class="column is-half"><div id="histogram_mulher"></div></div></div>
+    </section>
+
+    
   </body>
 </html>
