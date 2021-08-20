@@ -20,26 +20,41 @@ function horizontalbar(dataset,ais_groups,colorScale_ais){
   dataset_fortaleza.forEach(function(d){
     d.ID=count;count=count+1;
   })
+
   let facts_id = crossfilter(dataset_fortaleza)
   let AISfor = facts_id.dimension(d=>d.AIS)
+  let ais_group= AISfor.group()
   let xScale_ais = d3.scaleOrdinal().domain(ais_groups)
   let rChart = dc.rowChart(document.querySelector("#bar_chart"));
+  let max_value;
+  let map_AIS_count = new Map()
+  ais_group.all().forEach(function(item){
+    if(max_value<item.value){max_value=item.value}
+    map_AIS_count.set(item.key,+item.value)
+  })
+  let min_value =max_value
+  
+  ais_group.all().forEach(function(item){
+    if(min_value>item.value){min_value=item.value}
+  })  
+  //let c
+
+  let crime_scale = d3.scaleSequential()
+                      .domain([min_value, max_value+20])
+                      .interpolator(d3.interpolateReds)
+
   rChart
-      .width(450)
       .height(400)
       .dimension(AISfor)
-      .group(AISfor.group())
+      .group(ais_group)
       .margins({top: 0, right: 20, bottom: 20, left: 10})
       .x(xScale_ais)
       .elasticX(true)
-      .colors(colorScale_ais)
-      .colorAccessor(d => d.key)
-      .on("filtered",
-      function(chart,filter){
-        
-      })
+      .colors(crime_scale)
+      .colorAccessor(function(d){return crime_scale(d.value)});
   dc.renderAll()
 }
+
 async function main() {
   let dataset = await d3
     .csv('data/CVLI_2020_MAPS.csv')
@@ -53,13 +68,47 @@ async function main() {
     
       return data;
   });
+
+  let dataset_fortaleza= [];
+
+  let fil_dat=dataset.filter(function(d) {
+  
+  return d.MUNICIPIO.indexOf('Fortaleza') !== -1
+  })
+
+  dataset_fortaleza=dataset_fortaleza.concat(fil_dat);
+  let count =0;
+  dataset_fortaleza.forEach(function(d){
+    d.ID=count;count=count+1;
+  })
+
+  let facts_fortaleza = crossfilter(dataset_fortaleza)
+  let ais_dim = facts_fortaleza.dimension(d=>d.AIS)
+  let ais_group = ais_dim.group()
+  let max_value = 0
+  let map_AIS_count = new Map()
+
+  ais_group.all().forEach(function(item){
+    if(max_value<item.value){max_value=item.value}
+    map_AIS_count.set(item.key,+item.value)
+  })
+  let min_value =max_value
+  
+  ais_group.all().forEach(function(item){
+    if(min_value>item.value){min_value=item.value}
+  })  
+  //let crime_scale = d3.scaleQuantize().domain([0, max_value+20]).range(d3.schemeReds[9])
+
   let ais_groups=['AIS 1','AIS 2','AIS 3', 'AIS 4', 'AIS 5', 'AIS 6', 'AIS 7', 'AIS 8', 'AIS 9', 'AIS 10']  
   let colors=d3.schemeCategory10;
   let colorScale_ais = d3.scaleOrdinal()
                  .domain(ais_groups)
                  .range(colors)
+  
   horizontalbar(dataset,ais_groups,colorScale_ais)
   let facts = crossfilter(dataset);
+  let crime_scale = d3.scaleSequential().domain([min_value-10, max_value+20])
+  .interpolator(d3.interpolateReds)
 
   //let crime_scale = d3.scaleQuantize().domain([0, max_value]).range(d3.schemeReds[9]);
   //let geo_mun = await d3.json("https://raw.githubusercontent.com/tbrugz/geodata-br/master/geojson/geojs-23-mun.json")
@@ -77,6 +126,7 @@ async function main() {
                 Map tiles by &copy; <a href="https://carto.com/attribution">CARTO</a>`,     
                 maxZoom:17}).addTo(map)
   
+
   let infoControl = L.control()
 
   infoControl.onAdd = function (map) {
@@ -126,7 +176,7 @@ async function main() {
           color: 'white',
           dashArray: '3',
           fillOpacity: 0.6,
-          fillColor:colorScale_ais(bairro_AIS_map.get(feature.properties.NOME))
+          fillColor:crime_scale(map_AIS_count.get(bairro_AIS_map.get(feature.properties.NOME)))
           };
   }
   function zoomToFeature(e) {
@@ -145,6 +195,5 @@ async function main() {
         onEachFeature: onEachFeature
     }).addTo(map)
 
-  //d3.select("#histogram").append(svg)
   dc.renderAll();
 }

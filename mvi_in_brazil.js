@@ -24,19 +24,25 @@ async function main() {
   (function(facts) {
     let locationDimension = facts.dimension(item => item.location);
     let homicidesByLocation = locationDimension.group().reduceSum(item => item.homicidesRatio);
-    let locationNames = facts.all()
-      .map(item => item.location);
-
+    let mapValues = new Map()
+    facts.all().forEach(function(item){
+      mapValues.set(item.location,item.homicidesRatio)
+    })
+    let locationMap = new Map([...mapValues.entries()].sort((a, b) => b[1] - a[1]))
+    let estados = Array.from( locationMap.keys())
     let barChart = dc.barChart(document.querySelector('#cvli-in-brazil'));
 
     barChart
       .height(300)
+      .margins({top: 10, right: 30, bottom: 40, left: 40})
       .dimension(locationDimension)
-      .x(d3.scaleOrdinal().domain(locationNames))
-      .xUnits(dc.units.ordinal)
-      .renderHorizontalGridLines(true)
       .group(homicidesByLocation)
-  })(facts);
+      .x(d3.scaleOrdinal().domain(estados))
+      .gap(20)
+      .xAxis().tickValues(estados)
+      barChart.xUnits(dc.units.ordinal)
+      barChart.xAxisLabel("Localidade")
+      barChart.yAxisLabel("Taxa")  })(facts);
 
   dc.renderAll();
 }

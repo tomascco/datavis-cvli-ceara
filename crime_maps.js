@@ -163,7 +163,7 @@ async function main() {
     };
   }
 
-  geoj = L.geoJson(geo_mun, {
+  geoj = L.geoJson(geo_mun,{
         style: style_ceara,
         onEachFeature: onEachFeature
     }).addTo(map)
