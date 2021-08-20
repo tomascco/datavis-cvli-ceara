@@ -20,7 +20,7 @@ function histogram(data,color,select_name){
     .range([height - margin.bottom, margin.top])
   const svg = d3.select(select_name).append("svg")
       .attr("viewBox", [0, 0, width, height]);
-  
+
   svg.append("g")
       .attr("fill", color)
       .selectAll("rect")
@@ -30,7 +30,7 @@ function histogram(data,color,select_name){
       .attr("width", d => Math.max(0, x(d.x1) - x(d.x0) - 1))
       .attr("y", d => y(d.length))
       .attr("height", d => y(0) - y(d.length));
-  
+
   let xAxis = g => g
     .attr("transform", `translate(0,${height - margin.bottom})`)
     .call(d3.axisBottom(x).ticks(width / 80 ).tickSizeOuter(0))
@@ -41,7 +41,7 @@ function histogram(data,color,select_name){
         .attr("font-weight", "bold")
         .attr("text-anchor", "end")
         .text(data.x))
-  
+
   let yAxis = g => g
     .attr("transform", `translate(${margin.left},0)`)
     .call(d3.axisLeft(y).ticks(height / 40))
@@ -51,20 +51,20 @@ function histogram(data,color,select_name){
         .attr("text-anchor", "start")
         .attr("font-weight", "bold")
         .text(data.y))
-  
+
   svg.append("g")
       .call(xAxis);
-  
+
   svg.append("g")
       .call(yAxis);
-  
+
   svg.append("text")
     .attr("class", "x label")
     .attr("text-anchor", "end")
     .attr("x", width/2)
     .attr("y", height-30)
     .text("Idades (Anos)");
-  
+
   svg.append("text")
     .attr("class", "y label")
     .attr("text-anchor", "end")
@@ -73,7 +73,7 @@ function histogram(data,color,select_name){
     .attr("dy", ".75em")
     .attr("transform", "rotate(-90)")
     .text("Count");
-  
+
   return svg.node();
 }
 vitimas_sexo_plot = function(facts) {
@@ -89,7 +89,7 @@ vitimas_sexo_plot = function(facts) {
   let SexGroup = SexDim.group()
   let sexScale = d3.scaleOrdinal().domain(["Masculino","Feminino"]);
   let lineChart = dc.seriesChart(document.querySelector('#vitimas-sexo'));
-  
+
   lineChart
     .width(800)
     .height(300)
@@ -111,7 +111,7 @@ vitimas_sexo_plot = function(facts) {
 
 function sex_barplot(data,facts,sexo_id,color){
   let MunDim=facts.dimension(d=>d.MUNICIPIO)
-  let BarChart = dc.barChart(document.querySelector(sexo_id));  
+  let BarChart = dc.barChart(document.querySelector(sexo_id));
   let mun_map = new Map()
   MunDim.group().all().forEach(function(d){mun_map.set(d.key,d.value)})
   let mapSort1 = new Map([...mun_map.entries()].sort((a, b) => b[1] - a[1]))
@@ -137,26 +137,6 @@ function sex_barplot(data,facts,sexo_id,color){
     BarChart.yAxisLabel("Número de CVLI")
 }
 
-function lineplot(facts) {
-  let SeriesDim = facts.dimension(d => d3.timeMonth(d.dtg));
-  let dateDim = facts.dimension(d=>d.DATA)
-  let monthScale = d3.scaleTime().domain([ dateDim.bottom(1)[0].dtg,dateDim.top(1)[0].dtg]);
-  let SexDim=(facts.dimension(d=>d.SEXO))
-  let SexGroup = SexDim.group()
-  let sexScale = d3.scaleOrdinal().domain(["Masculino","Feminino"]);
-  let lineChart = dc.lineChart(document.querySelector('#vitimas_mes'));
-  
-  lineChart
-    .width(700)
-    .height(300)
-    .dimension(SeriesDim)
-    .group(SeriesDim.group())
-    .margins({top: 10, right: 10, bottom: 40, left: 30})
-    .x(monthScale)
-    lineChart.xAxisLabel("Data (dia)")
-    lineChart.yAxisLabel("Número de CVLI")
-
-};
 async function main() {
   let total_age =[];
   let h_age =[];
@@ -169,16 +149,16 @@ async function main() {
       data.forEach(function(item){
         item.dtg = parseDate(item.DATA);
         total_age.push(+item.IDADE);
-        
+
         if(item.SEXO=='Masculino'){
           h_age.push(+item.IDADE);
         }
         if(item.SEXO=='Feminino'){
           w_age.push(+item.IDADE);
-        
+
         };
       });
-    
+
       return [data,total_age,h_age,w_age];
     });
 
@@ -187,10 +167,8 @@ async function main() {
   let facts_3 = crossfilter(dataset[0].filter(function(d){if(d.SEXO=='Feminino'){return d}}));
 
   vitimas_sexo_plot(facts_1);
-  lineplot(facts_1) 
-  let svg_1 = histogram(dataset[2],"#ca0020","#histogram_homem");
-  let svg_2 = histogram(dataset[3],"#0571b0","#histogram_mulher");
-  let svg_3 = histogram(dataset[1],"#0571b0","#ceara_hist");
+  histogram(dataset[2],"#ca0020","#histogram_homem");
+  histogram(dataset[3],"#0571b0","#histogram_mulher");
   sex_barplot(dataset[0],facts_2,"#bar_homem","#ca0020");
   sex_barplot(dataset[0],facts_3,"#bar_mulher","#0571b0");
   dc.renderAll();
