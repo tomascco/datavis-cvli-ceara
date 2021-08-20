@@ -17,19 +17,18 @@ function horizontalbar(dataset,ais_groups,colorScale_ais){
 
   dataset_fortaleza=dataset_fortaleza.concat(fil_dat);
   let count =0;
-  dataset_fortaleza.forEach(function(d){
-    d.ID=count;count=count+1;
-  })
+  dataset_fortaleza.forEach(function(d){d.ID=count;count=count+1;})
 
   let facts_id = crossfilter(dataset_fortaleza)
   let AISfor = facts_id.dimension(d=>d.AIS)
   let ais_group= AISfor.group()
   let xScale_ais = d3.scaleOrdinal().domain(ais_groups)
   let rChart = dc.rowChart(document.querySelector("#bar_chart"));
-  let max_value;
+  let max_value=0;
   let map_AIS_count = new Map()
   ais_group.all().forEach(function(item){
-    if(max_value<item.value){max_value=item.value}
+    console.log(item.value)
+    if(max_value<+item.value){max_value=item.value}
     map_AIS_count.set(item.key,+item.value)
   })
   let min_value =max_value
@@ -37,12 +36,11 @@ function horizontalbar(dataset,ais_groups,colorScale_ais){
   ais_group.all().forEach(function(item){
     if(min_value>item.value){min_value=item.value}
   })  
-  //let c
 
-  let crime_scale = d3.scaleSequential()
-                      .domain([min_value, max_value+20])
-                      .interpolator(d3.interpolateReds)
+  let crime_scale = d3.scaleSequential(d3.interpolateReds)
+                      .domain([min_value-40, max_value+40])
 
+  console.log(crime_scale(71))
   rChart
       .height(400)
       .dimension(AISfor)
@@ -51,7 +49,9 @@ function horizontalbar(dataset,ais_groups,colorScale_ais){
       .x(xScale_ais)
       .elasticX(true)
       .colors(crime_scale)
-      .colorAccessor(function(d){return crime_scale(d.value)});
+      .colorAccessor(function(d){ return d.value; 
+                    });
+  
   dc.renderAll()
 }
 
