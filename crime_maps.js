@@ -90,9 +90,23 @@ async function renderMap(facts) {
       return map_mun;
     });
 
-  let munDim = facts.dimension(d => [d.MUNICIPIO, d.LATITUTDE, d.LONGITUDE]);
-  let mumDimCount = munDim.group();
-  let CITY_GROUP_BY = mumDimCount.all();
+  let cityDimension = facts.dimension(d => d.MUNICIPIO);
+  let CITY_GROUP_BY = cityDimension.group().all();
+
+  d3.select('#clear-all').on('click', () => {
+    cityDimension.filterAll();
+    dc.redrawAll();
+    map.setView([-4.8864139104811946, -39.60018165919775], 7);
+  });
+
+  let map_tax = new Map()
+  let map_numbers =new Map()
+
+  CITY_GROUP_BY.forEach(
+      function (d) {
+        map_tax.set(d.key,(d.value*100000/pop_mun.get(d.key)))
+        map_numbers.set(d.key,+d.value)
+      });
 
   let geo_mun = await d3.json("https://raw.githubusercontent.com/tbrugz/geodata-br/master/geojson/geojs-23-mun.json");
 
@@ -105,27 +119,31 @@ async function renderMap(facts) {
 
   let infoControl = L.control();
 
-  infoControl.onAdd = function (map) {
+  let geoj = L.geoJson(geo_mun,{
+    style: style_ceara,
+    onEachFeature: onEachFeature
+  }).addTo(map)
+
+  infoControl.onAdd = function (_map) {
     this._div = L.DomUtil.create('div', 'info');
     this.update();
     return this._div;
     }
 
-  let map_tax = new Map()
-  let map_numbers =new Map()
-
-  CITY_GROUP_BY.forEach(
-      function (d) {
-        map_tax.set(d.key[0],(d.value*100000/pop_mun.get(d.key[0])))
-        map_numbers.set(d.key[0],+d.value)
-      });
-
   infoControl.update = function (feat) {
     }
 
+  infoControl.addTo(map);
+
+  function zoomToFeature(e) {
+    cityDimension.filterExact(e.target.feature.properties.name);
+    map.fitBounds(e.target.getBounds());
+
+    dc.redrawAll();
+  }
+
   function highlightFeature(e) {
     let layer = e.target;
-      console.log(e.target)
 
     layer.setStyle({
           weight: 2,
@@ -133,7 +151,7 @@ async function renderMap(facts) {
           dashArray: '',
           fillOpacity: 0.7
     });
-    layer.bindTooltip( 
+    layer.bindTooltip(
         '<b>' + layer.feature.properties.name +'<br/>'+'População: '+pop_mun.get(layer.feature.properties.name )+
         '<br/>'+'Taxa por 100 mil: '+map_tax.get(layer.feature.properties.name).toFixed(2)
         +'<br/>'+'Número total de CVLI: '+map_numbers.get(layer.feature.properties.name)+
@@ -146,33 +164,22 @@ async function renderMap(facts) {
     infoControl.update(layer.feature);
   }
 
-  let geoj;
-
   function resetHighlight(e) {
     geoj.resetStyle(e.target);
     infoControl.update();
   }
 
-  function zoomToFeature(e) {
-    map.fitBounds(e.target.getBounds());
-  }
-  function onEachFeature(feature, layer) {
+  function onEachFeature(_feature, layer) {
     layer.on({
           mouseover: highlightFeature,
           mouseout: resetHighlight,
           click: zoomToFeature
         });
   }
+
   function style_ceara(feature) {
     let max_value = 249.9671095908433;
     let crime_scale = d3.scaleQuantize().domain([0, max_value]).range(d3.schemeReds[9])
-
-    let map_tax = new Map()
-
-    CITY_GROUP_BY.forEach(function(d) {
-      map_tax.set(d.key[0],(d.value*100000/pop_mun.get(d.key[0])))
-    });
-
 
     return {
       weight: 1,
@@ -183,13 +190,6 @@ async function renderMap(facts) {
       fillColor: crime_scale(map_tax.get(feature.properties.name))
     };
   }
-
-  geoj = L.geoJson(geo_mun,{
-        style: style_ceara,
-        onEachFeature: onEachFeature
-    }).addTo(map)
-
-  infoControl.addTo(map);
 }
 
 async function main() {
