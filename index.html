@@ -46,72 +46,86 @@
 
     </section>
 
-    <section class="section">
-      <h1 class="title">Visão Geral:</h1>
-      <h2 class="subtitle">Descrição</h2>
-        <div class="columns">
-          <div class="column is-one-third">
-            <div id="gender-controls"></div>
-          </div>
-          <div class="column is-one-third">
-            <div id="kind-of-crime"></div>
-          </div>
-          <div class="column is-one-third">
-            <div id="weapon-controls"></div>
+    <div class="container">
+      <section class="section">
+        <h1 class="title">Visão Geral:</h1>
+        <h2 class="subtitle">Descrição</h2>
+        <div class="box">
+          <div class="columns">
+            <div class="column is-one-third">
+              <div id="gender-controls"></div>
+            </div>
+            <div class="column is-one-third">
+              <div id="kind-of-crime"></div>
+            </div>
+            <div class="column is-one-third">
+              <div id="weapon-controls"></div>
+            </div>
           </div>
         </div>
-        <div class="columns">
-        <div class="column is-half">
-          <h2 class="subtitle">Taxa de CVLI por município por 100.000 hab</h2>
-          <button class="button is-outlined is-small" id='clear-all'>Limpar filtros</button>
-          <div id="ceara_map"></div>
+        <div class="box">
+          <div class="columns">
+            <div class="column is-half">
+              <h2 class="subtitle">Taxa de CVLI por município por 100.000 hab</h2>
+              <button class="button is-outlined is-small" id='clear-all'>Limpar filtros</button>
+              <div id="ceara_map"></div>
+            </div>
+            <div class="column is-half">
+              <h2 class="subtitle">Distribuição das idades das vítimas</h2>
+              <div id="ceara_hist"></div></div>
+          </div>
+          <div class="columns">
+            <div class="column is-full">
+              <div id="vitimas_mes"></div>
+            </div>
+          </div>
         </div>
-        <div class="column is-half">
-          <h2 class="subtitle">Distribuição das idades das vítimas</h2>
-          <div id="ceara_hist"></div></div>
-      </div>
-      <div class="columns">
-        <div class="column is-full">
-          <div id="vitimas_mes"></div>
+      </section>
+
+      <section class="section">
+        <div class="box">
+          <h1 class="title">Ocorrências por AIS</h1>
+          <h2 class="subtitle">Descrição</h2>
         </div>
-      </div>
+      </section>
 
-    </section>
+      <section class="section">
+        <div class="box">
+          <h1 class="title">Ocorrências por AIS: Fortaleza</h1>
+          <h2 class="subtitle">Descrição</h2>
+          <div class="columns">
+            <div class="column is-half"><div id="fortaleza_map"></div></div>
+            <div class="column is-half"><div id="bar_chart"></div></div>
+          </div>
+        </div>
+      </section>
 
-    <section class="section">
-      <h1 class="title">Ocorrências por AIS</h1>
-      <h2 class="subtitle">Descrição</h2>
-    </section>
+      <section class="section">
+        <div class="box">
+          <h1 class="title">Distribuição das ocorrências de CVLI por sexo</h1>
+          <h2 class="subtitle">Descrição</h2>
+          <div class="columns"><div class="column is-full">
+          <div id="vitimas-sexo"></div></div>
+          </div>
+          <div class="columns">
+            <div class="column is-half"><div id="bar_homem"></div></div>
+            <div class="column is-half"><div id="bar_mulher"></div></div>
+          </div>
+          <div class="columns">
+            <div class="column is-half">
+              <div id="histogram_homem"></div>
+            </div>
+          <div class="column is-half"><div id="histogram_mulher"></div></div></div>
+        </div>
+      </section>
 
-  <section class="section">
-      <h1 class="title">Ocorrências por AIS: Fortaleza</h1>
-      <h2 class="subtitle">Descrição</h2>
-        <div class="columns">
-        <div class="column is-half"><div id="fortaleza_map"></div></div>
-        <div class="column is-half"><div id="bar_chart"></div></div>
+      <section class="section">
+        <div class="box">
+          <h1 class="title">Como essa taxa de crimes se compara com o resto do Brasil?</h1>
+          <h2 class="subtitle">Crimes CVLI nos estados brasileiros e no Brasil em 2020.</h2>
+          <div id="cvli-in-brazil"></div>
+        </div>
+      </section>
     </div>
-    </section>
-    <section class="section">
-      <h1 class="title">Distribuição das ocorrências de CVLI por sexo</h1>
-      <h2 class="subtitle">Descrição</h2>
-      <div class="columns"><div class="column is-full">
-      <div id="vitimas-sexo"></div></div>
-      </div>
-      <div class="columns">
-        <div class="column is-half"><div id="bar_homem"></div></div>
-        <div class="column is-half"><div id="bar_mulher"></div></div>
-      </div>
-      <div class="columns">
-        <div class="column is-half">
-          <div id="histogram_homem"></div>
-        </div>
-      <div class="column is-half"><div id="histogram_mulher"></div></div></div>
-    </section>
-
-    <section class="section">
-      <h1 class="title">Como essa taxa de crimes se compara com o resto do Brasil?</h1>
-      <h2 class="subtitle">Crimes CVLI nos estados brasileiros e no Brasil em 2020.</h2>
-      <div id="cvli-in-brazil"></div>
-    </section>
   </body>
 </html>

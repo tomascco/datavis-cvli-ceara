@@ -1,3 +1,7 @@
+body {
+  background-color: gainsboro;
+}
+
 #ceara_map {
   width: 600px;
   height: 400px;
