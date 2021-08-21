@@ -121,12 +121,6 @@ async function renderMap(facts) {
       });
 
   infoControl.update = function (feat) {
-      this._div.innerHTML = '<h5>Taxa de CVLIs <br> por 100 mill habitantes</h5>' +  (feat ?
-        '<b>' + feat.properties.name +'<br/>'+'População: '+pop_mun.get(feat.properties.name )+
-        '<br/>'+'Taxa por 100 mil: '+map_tax.get(feat.properties.name).toFixed(2)
-        +'<br/>'+'Número total de CVLI: '+map_numbers.get(feat.properties.name)+
-        '</b>'+'<br />'
-        :'Passe o mouse sobre uma cidade para obter informação');
     }
 
   function highlightFeature(e) {
@@ -139,6 +133,11 @@ async function renderMap(facts) {
           dashArray: '',
           fillOpacity: 0.7
     });
+    layer.bindTooltip( 
+        '<b>' + layer.feature.properties.name +'<br/>'+'População: '+pop_mun.get(layer.feature.properties.name )+
+        '<br/>'+'Taxa por 100 mil: '+map_tax.get(layer.feature.properties.name).toFixed(2)
+        +'<br/>'+'Número total de CVLI: '+map_numbers.get(layer.feature.properties.name)+
+        '</b>'+'<br />').openTooltip();
 
     if (!L.Browser.ie && !L.Browser.opera) {
       layer.bringToFront();

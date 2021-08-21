@@ -7,53 +7,6 @@ function ready(fn) {
 }
 
 ready(main);
-function horizontalbar(dataset,ais_groups,colorScale_ais){
-  let dataset_fortaleza= [];
-
-  let fil_dat=dataset.filter(function(d) {
-  
-  return d.MUNICIPIO.indexOf('Fortaleza') !== -1
-  })
-
-  dataset_fortaleza=dataset_fortaleza.concat(fil_dat);
-  let count =0;
-  dataset_fortaleza.forEach(function(d){d.ID=count;count=count+1;})
-
-  let facts_id = crossfilter(dataset_fortaleza)
-  let AISfor = facts_id.dimension(d=>d.AIS)
-  let ais_group= AISfor.group()
-  let xScale_ais = d3.scaleOrdinal().domain(ais_groups)
-  let rChart = dc.rowChart(document.querySelector("#bar_chart"));
-  let max_value=0;
-  let map_AIS_count = new Map()
-  ais_group.all().forEach(function(item){
-    console.log(item.value)
-    if(max_value<+item.value){max_value=item.value}
-    map_AIS_count.set(item.key,+item.value)
-  })
-  let min_value =max_value
-  
-  ais_group.all().forEach(function(item){
-    if(min_value>item.value){min_value=item.value}
-  })  
-
-  let crime_scale = d3.scaleSequential(d3.interpolateReds)
-                      .domain([min_value-40, max_value+40])
-
-  console.log(crime_scale(71))
-  rChart
-      .height(400)
-      .dimension(AISfor)
-      .group(ais_group)
-      .margins({top: 0, right: 20, bottom: 20, left: 10})
-      .x(xScale_ais)
-      .elasticX(true)
-      .colors(crime_scale)
-      .colorAccessor(function(d){ return d.value; 
-                    });
-  
-  dc.renderAll()
-}
 
 async function main() {
   let dataset = await d3
@@ -87,6 +40,9 @@ async function main() {
   let ais_group = ais_dim.group()
   let max_value = 0
   let map_AIS_count = new Map()
+  let mapLayerGroups =[];
+  let idDim = facts_fortaleza.dimension(d=>[d.ID,d.AIS])
+  let idGroup= idDim.group()
 
   ais_group.all().forEach(function(item){
     if(max_value<item.value){max_value=item.value}
@@ -105,19 +61,15 @@ async function main() {
                  .domain(ais_groups)
                  .range(colors)
   
-  horizontalbar(dataset,ais_groups,colorScale_ais)
+  
   let facts = crossfilter(dataset);
   let crime_scale = d3.scaleSequential().domain([min_value-10, max_value+20])
   .interpolator(d3.interpolateReds)
 
-  //let crime_scale = d3.scaleQuantize().domain([0, max_value]).range(d3.schemeReds[9]);
-  //let geo_mun = await d3.json("https://raw.githubusercontent.com/tbrugz/geodata-br/master/geojson/geojs-23-mun.json")
   let bairros = await d3.json("data/FortalezaBairros.geojson");
   let bairros_AIS = await d3.csv("data/BAIRROS_AIS@1.csv");
   let bairro_AIS_map = new Map()
-    bairros_AIS.forEach(function(d){
-    bairro_AIS_map.set(d.Nome,d.AIS)
-    })
+  bairros_AIS.forEach(function(d){bairro_AIS_map.set(d.Nome,d.AIS)})
 
   let map = L.map('fortaleza_map').setView([-3.792614,-38.515877], 11)
   
@@ -136,10 +88,9 @@ async function main() {
   }
 
   infoControl.update = function (feat) {
-      this._div.innerHTML = '<h5>Bairros por AIS:</h5>' +  (feat ?
-        '<b>' + feat.properties.NOME +' '+bairro_AIS_map.get(feat.properties.NOME)+ '</b><br />'
-        : 'Passe o mouse sobre um bairro');
   }
+
+
 
   infoControl.addTo(map);
   
@@ -147,7 +98,6 @@ async function main() {
   
   function highlightFeature(e) {
       let layer = e.target;
-      console.log(e.target)
   
     layer.setStyle({
           weight: 2,
@@ -155,6 +105,9 @@ async function main() {
           dashArray: '',
           fillOpacity: 0.7
     });
+    
+    layer.bindTooltip( 
+        '<b>' + layer.feature.properties.NOME +'</br>'+bairro_AIS_map.get(layer.feature.properties.NOME)+ '</b><br />').openTooltip();  
 
     if (!L.Browser.ie && !L.Browser.opera) {
       layer.bringToFront();
@@ -165,6 +118,115 @@ async function main() {
   
   let geoj;
 
+  function horizontalbar(dataset,ais_groups,colorScale_ais,bairros_AIS){
+    let dataset_fortaleza= [];
+
+    let fil_dat=dataset.filter(function(d) {
+      return d.MUNICIPIO.indexOf('Fortaleza') !== -1
+    })
+
+  dataset_fortaleza=dataset_fortaleza.concat(fil_dat);
+  let count =0;
+  dataset_fortaleza.forEach(function(d){d.ID=+count;count=count+1;})
+
+  let facts_id = crossfilter(dataset_fortaleza)
+  let AISfor = facts_id.dimension(d=>d.AIS)
+  let ais_group= AISfor.group()
+
+  let idDim = facts_id.dimension(d=>[d.ID,d.AIS])
+  let idGroup= idDim.group()
+  
+  let xScale_ais = d3.scaleOrdinal().domain(ais_groups)
+  let rChart = dc.rowChart(document.querySelector("#bar_chart"));
+  let max_value=0;
+  let map_AIS_count = new Map()
+  ais_group.all().forEach(function(item){
+    if(max_value<+item.value){max_value=item.value}
+    map_AIS_count.set(item.key,+item.value)
+  })
+  let min_value =max_value
+  
+  ais_group.all().forEach(function(item){
+    if(min_value>item.value){min_value=item.value}
+  })  
+
+  let crime_scale = d3.scaleSequential(d3.interpolateReds)
+                      .domain([min_value-40, max_value+40])
+
+  
+  rChart
+      .height(400)
+      .dimension(AISfor)
+      .group(ais_group)
+      .margins({top: 0, right: 20, bottom: 20, left: 10})
+      .x(xScale_ais)
+      .elasticX(true)
+      .on("filtered", function(chart,filter){
+                      globalThis.ais_filtred=updateMarkers(idGroup)})
+      .colors(crime_scale)
+      .colorAccessor(function(item){return item.value;});
+    dc.renderAll()
+  function AddXAxis(chartToUpdate, displayText){
+  chartToUpdate.svg()
+                .append("text")
+                .attr("class", "x-axis-label")
+                .attr("text-anchor", "middle")
+                .attr("x", chartToUpdate.width()/2)
+                .attr("y", chartToUpdate.height()-3.5)
+                .text(displayText);
+                
+  }
+    AddXAxis(rChart, "This is the x-axis!");
+  }
+  function showLayer(bairros) {
+    for(let i=0;i<bairros.length;i++){  
+      var lg = mapLayerGroups[bairros[i]];
+      map.addLayer(lg);
+     }   
+}
+  function hideLayer(bairros) {
+    for(let i=0;i<bairros.length;i++){  
+      var lg = mapLayerGroups[bairros[i]];
+      map.removeLayer(lg);  
+  }
+}  
+horizontalbar(dataset,ais_groups,colorScale_ais)
+function updateMarkers(idGroup){
+  
+  let ids = idGroup.all()
+  //console.log(ids)
+  let todisplay = new Array(ids.length) //preallocate array to be faster
+  let mc = 0; //counter of used positions in the array
+  for (let i = 0; i < ids.length; i++) {
+  let tId = ids[i]; 
+    if(tId.value > 0){ 
+      //when an element is filtered, it has value > 0
+      todisplay[mc] =tId.key[1]
+      mc = mc + 1
+    }
+  }
+  //console.log(todisplay)
+  let ais_groups =[];
+
+  for(let i=0;i<todisplay.length;i++){
+    if(!(ais_groups.indexOf(todisplay[i]) > -1)){
+      ais_groups.push(todisplay[i])
+    }
+  }
+  bairros_selected = []
+  bairros_removed = []
+  bairros_AIS.forEach(function(item){
+                    if(ais_groups.indexOf(item.AIS) > -1){bairros_selected.push(item.Nome)}
+                    if(!(ais_groups.indexOf(item.AIS) > -1)){bairros_removed.push(item.Nome)}
+                    }
+                    
+                    
+  
+  )
+  hideLayer(bairros_removed) 
+  showLayer(bairros_selected)
+
+  }
   function resetHighlight(e) {
     geoj.resetStyle(e.target);
     infoControl.update();
@@ -183,17 +245,29 @@ async function main() {
     map.fitBounds(e.target.getBounds());
   }
   function onEachFeature(feature, layer) {
+    var lg = mapLayerGroups[feature.properties.NOME];
+
+    if (lg === undefined) {
+        lg = new L.layerGroup();
+        //add the layer to the map
+        lg.addTo(map);
+        //store layer
+        mapLayerGroups[feature.properties.NOME] = lg;
+    }
+
+    //add the feature to the layer
     layer.on({
           mouseover: highlightFeature,
           mouseout: resetHighlight,
           click: zoomToFeature
         });
+    lg.addLayer(layer);
   }
-
+  
+  
   geoj=L.geoJson(bairros, {
         style: style,
-        onEachFeature: onEachFeature
+        onEachFeature: onEachFeature,
     }).addTo(map)
 
-  dc.renderAll();
 }
