@@ -30,7 +30,7 @@ async function main() {
     })
     let locationMap = new Map([...mapValues.entries()].sort((a, b) => b[1] - a[1]))
     let estados = Array.from( locationMap.keys())
-    let barChart = dc.barChart(document.querySelector('#cvli-in-brazil'));
+    let barChart = dc.barChart('#cvli-in-brazil');
 
     barChart
       .height(300)
@@ -38,11 +38,14 @@ async function main() {
       .dimension(locationDimension)
       .group(homicidesByLocation)
       .x(d3.scaleOrdinal().domain(estados))
-      .gap(20)
-      .xAxis().tickValues(estados)
-      barChart.xUnits(dc.units.ordinal)
-      barChart.xAxisLabel("Localidade")
-      barChart.yAxisLabel("Taxa")  })(facts);
+      .gap(10)
+      .colorCalculator(d => (d.key === 'Brasil' || d.key === 'CE') ? '#e6550d' : '#3182bd')
+      .xAxis().tickValues(estados);
+
+    barChart.xUnits(dc.units.ordinal);
+    barChart.xAxisLabel("Localidade");
+    barChart.yAxisLabel("Taxa");
+    })(facts);
 
   dc.renderAll();
 }
