@@ -7,7 +7,7 @@ function ready(fn) {
 }
 ready(main);
 
-function histogram1(facts){
+async function histogram1(facts){
   ageDimension = facts.dimension(d => d.IDADE);
   ageCount = ageDimension.group().reduceCount();
 
@@ -18,13 +18,14 @@ function histogram1(facts){
     .dimension(ageDimension)
     .group(ageCount)
     .x(d3.scaleLinear().domain([0, 100]))
+    .elasticY(true);
 
   histogram.xAxisLabel("Idade");
   histogram.yAxisLabel("Count");
 
 }
 
-function lineplot(facts) {
+async function lineplot(facts) {
   let SeriesDim = facts.dimension(d => d3.timeMonth(d.dtg));
 
   let monthScale = d3.scaleTime().domain([ SeriesDim.bottom(1)[0].dtg, SeriesDim.top(1)[0].dtg]);
@@ -44,29 +45,50 @@ function lineplot(facts) {
     lineChart.yAxisLabel("Número de CVLI");
 };
 
+async function genderControls(facts) {
+  genderDimension = facts.dimension(d => d.SEXO);
+  let genderControls = dc.cboxMenu('#gender-controls');
 
-async function main() {
-  let dataset = await d3
-    .csv('data/CVLI_2020_MAPS.csv')
-    .then(function(data){
-      let parseDate = d3.utcParse("%d/%m/%Y");
+  genderControls
+    .dimension(genderDimension)
+    .group(genderDimension.group())
+    .multiple(true);
+}
 
-      data.forEach(function(item){
-        item.dtg = parseDate(item.DATA);
-        item.IDADE = parseInt(item.IDADE);
-      });
-      return data;
+async function crimeControls(facts) {
+  crimeDimension = facts.dimension(d => d['NATUREZA DO FATO']);
+  let kindOfCrimeControls = dc.cboxMenu('#kind-of-crime');
+
+  kindOfCrimeControls
+    .dimension(crimeDimension)
+    .group(crimeDimension.group())
+}
+
+async function weaponControls(facts) {
+  weaponDimension = facts.dimension(d => d['ARMA-UTILZADA']);
+  let weaponControls = dc.cboxMenu('#weapon-controls');
+
+  weaponControls
+    .dimension(weaponDimension)
+    .group(weaponDimension.group())
+}
+
+async function renderMap(facts) {
+  pop_mun = await d3
+    .csv("data/pop_est@3.csv", item => {
+      item.POP = parseInt(item.POP);
+
+      return item;
     })
-    .then(data => data.filter(d => typeof(d.IDADE) === 'number' && !isNaN(d.IDADE)))
-  pop_mun = await d3.csv("data/pop_est@3.csv", function(d){
-    d.POP=parseFloat(+d.POP); return d}).then(
-    function(d){
+    .then(function(data){
       let map_mun = new Map();
-      d.forEach(function(d){map_mun.set(d["NOME"],d["POP"])});
+
+      data.forEach(item => {
+        map_mun.set(item["NOME"], item["POP"])
+      });
+
       return map_mun;
     });
-
-  let facts = crossfilter(dataset);
 
   let munDim = facts.dimension(d => [d.MUNICIPIO, d.LATITUTDE, d.LONGITUDE]);
   let mumDimCount = munDim.group();
@@ -169,10 +191,31 @@ async function main() {
     }).addTo(map)
 
   infoControl.addTo(map);
+}
+
+async function main() {
+  let facts = await d3
+    .csv('data/CVLI_2020_MAPS.csv')
+    .then(function(data){
+      let parseDate = d3.utcParse("%d/%m/%Y");
+
+      data.forEach(function(item){
+        item.dtg = parseDate(item.DATA);
+        item.IDADE = parseInt(item.IDADE);
+      });
+      return data;
+    })
+    .then(data => data.filter(d => typeof(d.IDADE) === 'number' && !isNaN(d.IDADE)))
+    .then(data => crossfilter(data));
+
+  renderMap(facts);
 
   histogram1(facts);
   lineplot(facts);
 
+  genderControls(facts);
+  crimeControls(facts);
+  weaponControls(facts);
 
   dc.renderAll();
 }
