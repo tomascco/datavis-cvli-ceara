@@ -24,9 +24,10 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
       integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
       crossorigin=""></script>
-    <script src="crimes_location.js"></script>
+
     <script src="crime_maps.js"></script>
     <script src="fortaleza_map.js"></script>
+    <script src="feminicides.js"></script>
     <script src="mvi_in_brazil.js"></script>
   </head>
 
@@ -102,14 +103,16 @@
 
       <section class="section">
         <div class="box">
-          <h1 class="title">Distribuição das ocorrências de CVLI por sexo</h1>
-          <h2 class="subtitle">Descrição</h2>
-          <div class="columns"><div class="column is-full">
-          <div id="vitimas-sexo"></div></div>
+          <h1 class="title">Em destaque: Feminicídios</h1>
+          <h2 class="subtitle">Feminicídios são crimes praticados contra mulheres por razões da condição do gênero feminino.</h2>
+          <div class="columns">
+            <div class="column is-full">
+              <div id="feminicides-by-city"></div>
+            </div>
           </div>
           <div class="columns">
-            <div class="column is-half"><div id="bar_homem"></div></div>
-            <div class="column is-half"><div id="bar_mulher"></div></div>
+            <div class="column is-half"><div id="weapon-kind"></div></div>
+            <div class="column is-half"><div id="weekday"></div></div>
           </div>
           <div class="columns">
             <div class="column is-half">

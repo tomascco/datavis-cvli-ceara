@@ -1,3 +1,13 @@
+const weekDays = {
+  0: 'Domingo',
+  1: 'Segunda',
+  2: 'Terça',
+  3: 'Quarta',
+  4: 'Quinta',
+  5: 'Sexta',
+  6: 'Sábado'
+}
+
 function ready(fn) {
   if (document.readyState != 'loading'){
     fn();
@@ -5,8 +15,74 @@ function ready(fn) {
     document.addEventListener('DOMContentLoaded', fn);
   }
 }
-
 ready(main);
+
+async function citiesChart(facts) {
+  let pop_mun = await d3
+  .csv("data/pop_est@3.csv", item => {
+    item.POP = parseInt(item.POP);
+
+    return item;
+  })
+  .then(function(data){
+    let map_mun = new Map();
+
+    data.forEach(item => {
+      map_mun.set(item["NOME"], item["POP"])
+    });
+
+    return map_mun;
+  });
+
+  let citiesDimension = facts.dimension(d => d.MUNICIPIO);
+  let citiesGroup = citiesDimension.group().reduceSum(d => 100000/pop_mun.get(d.MUNICIPIO));
+
+  let barChart = dc.barChart('#feminicides-by-city')
+  barChart
+    .dimension(citiesDimension)
+    .group(citiesGroup)
+    .x(d3.scaleOrdinal().domain(citiesGroup.top(Infinity).map(d => d.key)))
+    .gap(20)
+    .xUnits(dc.units.ordinal)
+    .height(400);
+
+    barChart.xAxisLabel("Localidade");
+    barChart.yAxisLabel("Taxa");
+
+}
+
+function weaponKind(facts) {
+  weaponDimension = facts.dimension(d => d['ARMA-UTILZADA']);
+  weaponGroup = weaponDimension.group();
+
+  pieChart = dc.pieChart('#weapon-kind');
+
+  pieChart
+    .dimension(weaponDimension)
+    .group(weaponGroup)
+    .height(200)
+    .legend(dc.legend().highlightSelected(true));
+}
+
+function weekDay(facts) {
+  dayDimension = facts.dimension(d => d.day);
+  dayGroup = dayDimension.group();
+
+  barChart = dc.barChart('#weekday');
+
+  barChart
+    .dimension(dayDimension)
+    .group(dayGroup)
+    .height(200)
+    .gap(10)
+    .x(d3.scaleOrdinal().domain(Object.values(weekDays)))
+    .xUnits(dc.units.ordinal)
+    .yAxis()
+      .tickFormat(d3.format('d'))
+      .ticks(6);
+
+}
+
 function histogram(data,color,select_name){
   let height = 500;
   let width=800;
@@ -76,6 +152,7 @@ function histogram(data,color,select_name){
 
   return svg.node();
 }
+
 vitimas_sexo_plot = function(facts) {
   let SeriesDim = facts.dimension(d => [d.SEXO, d3.timeMonth(d.dtg)]);
   let colorScale = d3
@@ -138,38 +215,24 @@ function sex_barplot(data,facts,sexo_id,color){
 }
 
 async function main() {
-  let total_age =[];
-  let h_age =[];
-  let w_age =[];
-  let dataset = await d3
-    .csv('data/CVLI_2020_MAPS.csv')
+  let facts = await d3
+    .csv('data/CVLI_2020_MAPS_feminicides.csv')
     .then(function(data){
       let parseDate = d3.utcParse("%d/%m/%Y");
 
       data.forEach(function(item){
         item.dtg = parseDate(item.DATA);
-        total_age.push(+item.IDADE);
+        item.day = weekDays[item.dtg.getDay()];
 
-        if(item.SEXO=='Masculino'){
-          h_age.push(+item.IDADE);
-        }
-        if(item.SEXO=='Feminino'){
-          w_age.push(+item.IDADE);
-
-        };
+        item.IDADE = parseInt(item.IDADE);
       });
+      return data;
+    })
+    .then(data => crossfilter(data));
 
-      return [data,total_age,h_age,w_age];
-    });
+    citiesChart(facts);
+    weaponKind(facts);
+    weekDay(facts);
 
-  let facts_1 = crossfilter(dataset[0]);
-  let facts_2 = crossfilter(dataset[0].filter(function(d){if(d.SEXO=='Masculino'){return d}}));
-  let facts_3 = crossfilter(dataset[0].filter(function(d){if(d.SEXO=='Feminino'){return d}}));
-
-  vitimas_sexo_plot(facts_1);
-  histogram(dataset[2],"#ca0020","#histogram_homem");
-  histogram(dataset[3],"#0571b0","#histogram_mulher");
-  sex_barplot(dataset[0],facts_2,"#bar_homem","#ca0020");
-  sex_barplot(dataset[0],facts_3,"#bar_mulher","#0571b0");
-  dc.renderAll();
+    dc.renderAll();
 }

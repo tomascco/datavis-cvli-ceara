@@ -74,7 +74,7 @@ async function weaponControls(facts) {
 }
 
 async function renderMap(facts) {
-  pop_mun = await d3
+  let pop_mun = await d3
     .csv("data/pop_est@3.csv", item => {
       item.POP = parseInt(item.POP);
 
