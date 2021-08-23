@@ -13,7 +13,6 @@
       integrity="sha512-ZCK4qcVpG4m3G6VG2CWs5Tl870Xn9xhT3SWJLmbsbTfU9/hzyZDeCzyLpjsCc27YxlDi19URyKlY+h4cQIifig=="
       crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
-    <link rel="stylesheet" href="custom.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter2/1.5.4/crossfilter.min.js"
       integrity="sha512-YTblpiY3CE9zQBW//UMBfvDF2rz6bS7vhhT5zwzqQ8P7Z0ikBGG8hfcRwmmg3IuLl2Rwk95NJUEs1HCQD4EDKQ=="
@@ -24,11 +23,29 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
       integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
       crossorigin=""></script>
-
+    <script src="ceara_ais.js"></script>
     <script src="crime_maps.js"></script>
-    <script src="fortaleza_map.js"></script>
+    <script src="fortaleza_ais.js"></script>
     <script src="feminicides.js"></script>
     <script src="mvi_in_brazil.js"></script>
+    <style type="text/css">
+     
+      #ceara_map {
+       width: 400px;
+       height: 400px;
+     }
+ 
+     #ais_fortaleza{
+       width: 400px;
+       height: 400px;
+     }
+ 
+     #ais_map{
+       width: 400px;
+       height: 400px;
+     }
+ 
+    </style> 
   </head>
 
   <body>
@@ -82,24 +99,103 @@
           </div>
         </div>
       </section>
-
-      <section class="section">
+    <section class="section">
+        <h1 class="title">CVLI Nas Diferentes AIS</h1>
+        <div class="columns">
+          <div class="column is-half">
+             <option class="button is-danger" onclick ="updateData()" ondblclick="originalData()">Número Brutos de CVLI</option>
+          </div>
+          <div class="column is-half">
+            <option class="button is-danger" onclick ="originalData()">Taxa de CVLI por 100.000 habitantes</option>
+          </div>
+          
+      </div>
         <div class="box">
-          <h1 class="title">Ocorrências por AIS</h1>
-          <h2 class="subtitle">Descrição</h2>
-        </div>
-      </section>
-
-      <section class="section">
-        <div class="box">
-          <h1 class="title">Ocorrências por AIS: Fortaleza</h1>
-          <h2 class="subtitle">Descrição</h2>
           <div class="columns">
-            <div class="column is-half"><div id="fortaleza_map"></div></div>
-            <div class="column is-half"><div id="bar_chart"></div></div>
+            <div class="column is-one-third">
+              <div id="gender-controls_ais"></div>
+            </div>
+            <div class="column is-one-third">
+              <div id="kind-of-crime_ais"></div>
+            </div>
+            <div class="column is-one-third">
+              <div id="weapon-controls_ais"></div>
+            </div>
           </div>
         </div>
-      </section>
+        
+        <div class="columns">
+          <div class="column is-full">
+            <div class="box">
+              "As Áreas Integradas de Segurança (AIS) compõem as unidades administrativas da segurança pública do Estado e são administradas por meio de uma gestão compartilhada entre as vinculadas da Secretaria da Segurança Pública e Defesa Social (SSPDS-CE)."
+            </br> 
+            <p id="demo"><b>Mapa e gráfico de barra estão considerando a Taxa de CVLI por 100.000 mill habitantes</b></p>
+            </div>
+  
+          </div>
+  
+        </div>
+        <div class="box">
+        <div class="columns">
+          <div class="is-one-fifth"><div id="ais_map"></div></div>
+          <div class="is-one-fifth"><div id="bar_ais"></div></div>
+          <div class="is-one-fifth"><div id="hist_ais"></div></div>
+        </div>
+        <div class="columns">
+          <div class="column is-three-fifths"><div id="vitimas_ais"></div></div>
+          <div class="column is-two-fifths"><div id="heatmap_days"></div></div>
+        </div>
+        </div>
+  </section>
+
+  <section class="section">
+    <h1 class="title">CVLI Nas Diferentes AIS de Fortaleza</h1>
+    <div class="columns">
+      <div class="column is-half">
+         <option class="button is-danger" onclick ="updateData()" ondblclick="originalData()">Número Brutos de CVLI</option>
+      </div>
+      <div class="column is-half">
+        <option class="button is-danger" onclick ="originalData()">Taxa de CVLI por 100.000 habitantes</option>
+      </div>
+      
+  </div>
+    <div class="box">
+      <div class="columns">
+        <div class="column is-one-third">
+          <div id="gender-controls_fortaleza"></div>
+        </div>
+        <div class="column is-one-third">
+          <div id="kind-of-crime_fortaleza"></div>
+        </div>
+        <div class="column is-one-third">
+          <div id="weapon-controls_fortaleza"></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="columns">
+      <div class="column is-full">
+        <div class="box">
+          "As Áreas Integradas de Segurança (AIS) compõem as unidades administrativas da segurança pública do Estado e são administradas por meio de uma gestão compartilhada entre as vinculadas da Secretaria da Segurança Pública e Defesa Social (SSPDS-CE)."
+        </br> 
+        <p id="demo_2"><b>Mapa e gráfico de barra estão considerando a Taxa de CVLI por 100.000 mill habitantes</b></p>
+        </div>
+
+      </div>
+
+    </div>
+    <div class="box">
+    <div class="columns">
+      <div class="is-one-fifth"><div id="ais_fortaleza"></div></div>
+      <div class="is-one-fifth"><div id="bar_fortaleza"></div></div>
+      <div class="is-one-fifth"><div id="hist_fortaleza"></div></div>
+    </div>
+    <div class="columns">
+      <div class="column is-three-fifths"><div id="vitimas_fortaleza"></div></div>
+      <div class="column is-two-fifths"><div id="heatmap_fortaleza"></div></div>
+    </div>
+    </div>
+</section>
 
       <section class="section">
         <div class="box">
