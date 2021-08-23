@@ -13,11 +13,9 @@ function ready(fn) {
   
   ready(main);
   function showLayer2(municipios){
-    console.log(municipios)
     for(let i=0;i<municipios.length;i++){  
       var lg = mapLayerGroups2[municipios[i]];
       if(!(typeof lg === 'undefined')){
-        console.log(lg)
       map2.addLayer(lg);
       } 
      }   
