@@ -20,7 +20,6 @@ async function main() {
 
   facts = crossfilter(dataset);
 
-
   (function(facts) {
     let locationDimension = facts.dimension(item => item.location);
     let homicidesByLocation = locationDimension.group().reduceSum(item => item.homicidesRatio);
@@ -37,7 +36,7 @@ async function main() {
       .margins({top: 10, right: 30, bottom: 40, left: 40})
       .dimension(locationDimension)
       .group(homicidesByLocation)
-      .x(d3.scaleOrdinal().domain(estados))
+      .x(d3.scaleBand().domain(estados))
       .gap(10)
       .colorCalculator(d => (d.key === 'Brasil' || d.key === 'CE') ? '#e6550d' : '#3182bd')
       .xAxis().tickValues(estados);
