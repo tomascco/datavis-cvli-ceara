@@ -51,8 +51,7 @@ async function genderControls(facts) {
 
   genderControls
     .dimension(genderDimension)
-    .group(genderDimension.group())
-    .multiple(true);
+    .group(genderDimension.group());
 }
 
 async function crimeControls(facts) {
