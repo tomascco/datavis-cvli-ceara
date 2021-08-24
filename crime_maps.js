@@ -96,6 +96,7 @@ async function renderMap(facts) {
     cityDimension.filterAll();
     dc.redrawAll();
     map.setView([-4.8864139104811946, -39.60018165919775], 7);
+
   });
 
   let map_tax = new Map()
@@ -191,9 +192,36 @@ async function renderMap(facts) {
   }
 }
 
+async function heatmapgeral(facts){
+  var sexDaydim_2 = facts.dimension(function(item){return [item.Mes,item.DiaDaSemana]})
+    var sexDayGroup_2 = sexDaydim_2.group();
+    let heatmap = new dc.HeatMap("#heatmapgeral_days")
+    var ykeyorder = {'Janeiro':1,'Fevereiro':2,'Março':3,'Abril':4,'Maio':5,'Junho':6,'Julho':7,'Agosto':8,'Setembro':9,'Outubro':10,'Novembro':11,'Dezembro':12}
+    var xkeyorder = {'Segunda':1,'Terça':2,'Quarta':3,'Quinta':4,'Sexta':5,'Sábado':6,'Domingo':7}
+    heatmap
+    .height(300)
+    .dimension(sexDaydim_2)
+    .group(sexDayGroup_2)
+    .margins({top: 0, right:20 , bottom: 30, left:120})
+    .keyAccessor(function(d) { return d.key[0]; })
+    .valueAccessor(function(d) { return d.key[1]; })
+    .colorAccessor(function(d) { return +d.value; })
+    .colOrdering((a,b) => ykeyorder[a] - ykeyorder[b])
+    .rowOrdering((a,b) => xkeyorder[a] - xkeyorder[b])
+    .title(function(d) {
+          return "Mês: " + d.key[0] + "\n" +
+                 "Dia da Semana:  " + d.key[1] + "\n" +
+                 "Número de CVLI: " + d.value})
+    .colors(d3.scaleSequential([0,100], d3.interpolateBlues))
+    .calculateColorDomain()
+    .on('preRedraw', function() {
+      heatmap.calculateColorDomain();
+    })
+  
+}
 async function main() {
   let facts = await d3
-    .csv('data/CVLI_2020_MAPS.csv')
+    .csv('data/CVLI_2020_CE.csv')
     .then(function(data){
       let parseDate = d3.utcParse("%d/%m/%Y");
 
@@ -214,6 +242,6 @@ async function main() {
   genderControls(facts);
   crimeControls(facts);
   weaponControls(facts);
-
+  heatmapgeral(facts);
   dc.renderAll();
 }
