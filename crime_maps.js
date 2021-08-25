@@ -200,11 +200,13 @@ async function renderMap(facts) {
 
 async function heatmapgeral(facts){
   var sexDaydim_2 = facts.dimension(function(item){return [item.Mes,item.DiaDaSemana]})
-    var sexDayGroup_2 = sexDaydim_2.group();
-    let heatmap = new dc.HeatMap("#heatmapgeral_days")
-    var ykeyorder = {'Janeiro':1,'Fevereiro':2,'Março':3,'Abril':4,'Maio':5,'Junho':6,'Julho':7,'Agosto':8,'Setembro':9,'Outubro':10,'Novembro':11,'Dezembro':12}
-    var xkeyorder = {'Segunda':1,'Terça':2,'Quarta':3,'Quinta':4,'Sexta':5,'Sábado':6,'Domingo':7}
-    heatmap
+  var sexDayGroup_2 = sexDaydim_2.group();
+  let heatmap = new dc.HeatMap("#heatmapgeral_days")
+  var ykeyorder = {'Janeiro':1,'Fevereiro':2,'Março':3,'Abril':4,'Maio':5,'Junho':6,'Julho':7,'Agosto':8,'Setembro':9,'Outubro':10,'Novembro':11,'Dezembro':12}
+  var xkeyorder = {'Segunda':1,'Terça':2,'Quarta':3,'Quinta':4,'Sexta':5,'Sábado':6,'Domingo':7}
+  let colorScale = d3.scaleSequential([0,100], d3.interpolateBlues);
+
+  heatmap
     .height(300)
     .dimension(sexDaydim_2)
     .group(sexDayGroup_2)
@@ -216,13 +218,39 @@ async function heatmapgeral(facts){
     .rowOrdering((a,b) => xkeyorder[a] - xkeyorder[b])
     .title(function(d) {
           return "Mês: " + d.key[0] + "\n" +
-                 "Dia da Semana:  " + d.key[1] + "\n" +
-                 "Número de CVLI: " + d.value})
-    .colors(d3.scaleSequential([0,100], d3.interpolateBlues))
+                  "Dia da Semana:  " + d.key[1] + "\n" +
+                  "Número de CVLI: " + d.value})
+    .colors(colorScale)
     .calculateColorDomain()
-    .on('preRedraw', function() {
-      heatmap.calculateColorDomain();
+    .on('preRedraw', function(chart) {
+      chart.calculateColorDomain();
+      updateHeatmapLegend(chart.colors().domain());
     })
+
+    function updateHeatmapLegend(domain) {
+      domain.splice(1, 0, (domain[0]+domain[1])/2);
+
+      range = ["rgb(247, 251, 255)", "rgb(109, 174, 213)", "rgb(8, 48, 107)"];
+
+      colorMap = domain.map((point, index) => [point, range[index]]);
+
+      console.log(colorMap);
+
+      let labels = colorMap
+        .map(map => `<span><i style="background: ${map[1]}; opacity: 1;"></i> ${(d3.format("d"))(map[0])}</span>`);
+
+    let container = document.querySelector('#legend-container');
+
+    container.innerHTML = '';
+
+    let legend = document.createElement('div');
+    legend.classList.add('legend', 'heatmap_legend');
+
+
+    legend.innerHTML = labels.join(' ') + '<p>Ocorrências</p>';
+    container.append(legend);
+  }
+  updateHeatmapLegend(heatmap.colors().domain());
 }
 
 async function main() {
