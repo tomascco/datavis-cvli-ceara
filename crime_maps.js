@@ -102,13 +102,15 @@ async function renderMap(facts) {
   let map_tax = new Map()
   let map_numbers =new Map()
 
-  CITY_GROUP_BY.forEach(
-      function (d) {
-        map_tax.set(d.key,(d.value*100000/pop_mun.get(d.key)))
-        map_numbers.set(d.key,+d.value)
-      });
+  CITY_GROUP_BY.forEach(function(d) {
+    map_tax.set(d.key,(d.value*100000/pop_mun.get(d.key)))
+    map_numbers.set(d.key,+d.value)
+  });
 
   let geo_mun = await d3.json("https://raw.githubusercontent.com/tbrugz/geodata-br/master/geojson/geojs-23-mun.json");
+
+  let colors = d3.schemeReds[9];
+  let crime_scale = d3.scaleQuantize().domain([0, 249.96]).range(colors);
 
   let map = L.map('ceara_map').setView([-4.8864139104811946, -39.60018165919775], 7)
 
@@ -117,23 +119,33 @@ async function renderMap(facts) {
                 Map tiles by &copy; <a href="https://carto.com/attribution">CARTO</a>`,
                 maxZoom:17}).addTo(map)
 
-  let infoControl = L.control();
-
   let geoj = L.geoJson(geo_mun,{
     style: style_ceara,
     onEachFeature: onEachFeature
   }).addTo(map)
 
-  infoControl.onAdd = function (_map) {
-    this._div = L.DomUtil.create('div', 'info');
-    this.update();
-    return this._div;
+  let legendControl = L.control({position: 'bottomright'});
+
+  legendControl.onAdd = function (_map) {
+    let div = L.DomUtil.create('div', 'info legend'),
+      labels = [],
+            n = colors.length,
+      from, to;
+
+    for (let i = 0; i < n; i++) {
+      let c = colors[i]
+            let fromto = crime_scale.invertExtent(c);
+      labels.push(
+        '<i style="background:' + colors[i] + '"></i> ' +
+        d3.format("d")(fromto[0]) + (d3.format("d")(fromto[1]) ? '&ndash;' + d3.format("d")(fromto[1]) : '+'));
     }
 
-  infoControl.update = function (feat) {
-    }
+    div.innerHTML = labels.join('<br>')
+    return div
+  }
 
-  infoControl.addTo(map);
+  legendControl.addTo(map)
+
 
   function zoomToFeature(e) {
     cityDimension.filterExact(e.target.feature.properties.name);
@@ -160,13 +172,10 @@ async function renderMap(facts) {
     if (!L.Browser.ie && !L.Browser.opera) {
       layer.bringToFront();
     }
-
-    infoControl.update(layer.feature);
   }
 
   function resetHighlight(e) {
     geoj.resetStyle(e.target);
-    infoControl.update();
   }
 
   function onEachFeature(_feature, layer) {
@@ -178,9 +187,6 @@ async function renderMap(facts) {
   }
 
   function style_ceara(feature) {
-    let max_value = 249.9671095908433;
-    let crime_scale = d3.scaleQuantize().domain([0, max_value]).range(d3.schemeReds[9])
-
     return {
       weight: 1,
       opacity: 1,
@@ -217,8 +223,8 @@ async function heatmapgeral(facts){
     .on('preRedraw', function() {
       heatmap.calculateColorDomain();
     })
-  
 }
+
 async function main() {
   let facts = await d3
     .csv('data/CVLI_2020_CE.csv')
