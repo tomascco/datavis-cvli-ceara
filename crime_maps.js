@@ -228,16 +228,10 @@ async function heatmapgeral(facts){
     })
 
     function updateHeatmapLegend(domain) {
-      domain.splice(1, 0, (domain[0]+domain[1])/2);
-
-      range = ["rgb(247, 251, 255)", "rgb(109, 174, 213)", "rgb(8, 48, 107)"];
-
-      colorMap = domain.map((point, index) => [point, range[index]]);
-
-      console.log(colorMap);
-
-      let labels = colorMap
-        .map(map => `<span><i style="background: ${map[1]}; opacity: 1;"></i> ${(d3.format("d"))(map[0])}</span>`);
+      let numberFormatter = d3.format("d");
+      let content = `
+        <i class="gradient"></i> ${numberFormatter(domain[0])}-${numberFormatter(domain[1])} Ocorrências
+      `;
 
     let container = document.querySelector('#legend-container');
 
@@ -247,7 +241,7 @@ async function heatmapgeral(facts){
     legend.classList.add('legend', 'heatmap_legend');
 
 
-    legend.innerHTML = labels.join(' ') + '<p>Ocorrências</p>';
+    legend.innerHTML = content;
     container.append(legend);
   }
   updateHeatmapLegend(heatmap.colors().domain());
