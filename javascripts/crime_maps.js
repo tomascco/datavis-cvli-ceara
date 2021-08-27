@@ -227,13 +227,13 @@ async function heatmapgeral(facts){
       updateHeatmapLegend(chart.colors().domain());
     })
 
-    function updateHeatmapLegend(domain) {
-      let numberFormatter = d3.format("d");
-      let content = `
-        <i class="gradient"></i> ${numberFormatter(domain[0])}-${numberFormatter(domain[1])} Ocorrências
-      `;
+  function updateHeatmapLegend(domain) {
+    let numberFormatter = d3.format("d");
+    let content = `
+      <i class="gradient"></i> ${numberFormatter(domain[0])}-${numberFormatter(domain[1])} Ocorrências
+    `;
 
-    let container = document.querySelector('#legend-container');
+    let container = document.querySelector('#city-heatmap-legend');
 
     container.innerHTML = '';
 

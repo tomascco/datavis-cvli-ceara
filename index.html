@@ -25,11 +25,11 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
       integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
       crossorigin=""></script>
-    <script src="ceara_ais.js"></script>
-    <script src="crime_maps.js"></script>
-    <script src="fortaleza_ais.js"></script>
-    <script src="feminicides.js"></script>
-    <script src="mvi_in_brazil.js"></script>
+    <script src="javascripts/ceara_ais.js"></script>
+    <script src="javascripts/crime_maps.js"></script>
+    <script src="javascripts/fortaleza_ais.js"></script>
+    <script src="javascripts/feminicides.js"></script>
+    <script src="javascripts/mvi_in_brazil.js"></script>
   </head>
 
   <body>
@@ -94,7 +94,7 @@
             <div class="column is-full">
               <h2 class="subtitle">CVLIs por dia da semana para cada mes</h2>
               <div id="heatmapgeral_days"></div>
-              <div id="legend-container"></div>
+              <div id="city-heatmap-legend"></div>
             </div>
           </div>
           <span class="is-italic is-size-6">Fonte: SSPDS-CE e IBGE.</span>
@@ -138,7 +138,10 @@
               <div class="column is-full"><div id="vitimas_ais"></div></div>
             </div>
             <div class="columns">
-              <div class="column is-full"><div id="heatmap_days"></div></div>
+              <div class="column is-full">
+                <div id="heatmap_days"></div>
+                <div id="ceara-heatmap-legend"></div>
+              </div>
             </div>
             <span class="is-italic is-size-6">Fonte: SSPDS-CE e IBGE.</span>
           </div>
@@ -181,7 +184,10 @@
             <div class="column is-full"><div id="vitimas_fortaleza"></div></div>
           </div>
           <div class="columns">
-            <div class="column is-full"><div id="heatmap_fortaleza"></div></div>
+            <div class="column is-full">
+              <div id="heatmap_fortaleza"></div>
+              <div id="fortaleza-heatmap-legend"></div>
+            </div>
           </div>
           <span class="is-italic is-size-6">Fonte: SSPDS-CE e IBGE.</span>
         </div>
