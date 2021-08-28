@@ -294,7 +294,7 @@ async function heatmapgeral(facts){
   function updateHeatmapLegend(domain) {
     let numberFormatter = d3.format("d");
     let content = `
-      <i class="gradient"></i> ${numberFormatter(domain[0])}-${numberFormatter(domain[1])} Ocorrências
+      <i class="gradient"></i> <b>${numberFormatter(domain[0])}-${numberFormatter(domain[1])} Ocorrências
     `;
 
     let container = document.querySelector('#city-heatmap-legend');
