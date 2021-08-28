@@ -1,20 +1,20 @@
 #ceara_map {
-  height: 400px;
+  height: 300px;
 }
 
 #ais_fortaleza{
-  width: 400px;
-  height: 400px;
+  width: 430px;
+  height: 300px;
 }
 
 #ais_map{
   width: 400px;
-  height: 400px;
+  height: 300px;
 }
 
 .info {
-  padding: 6px 8px;
-  font: 14px/16px Arial, Helvetica, sans-serif;
+  padding: 0px 8px;
+  font: 12px/12px Arial, Helvetica, sans-serif;
   background: white;
   background: rgba(255,255,255,0.8);
   box-shadow: 0 0 15px rgba(0,0,0,0.2);
@@ -26,7 +26,7 @@
 }
 
 .legend {
-  text-align: left;
+  text-align: right;
   line-height: 18px;
   color: #555;
 }
@@ -40,10 +40,10 @@
 }
 
 .legend i.gradient {
-  width: 72px;
+  width: 100px;
   opacity: 1;
   background: rgb(247,251,255);
-  background: linear-gradient(90deg, rgba(247,251,255,1) 0%, rgba(247,251,255,1) 10%, rgba(8,48,107,1) 90%);
+  background: linear-gradient(to right,#fff5eb,#fff0e1,#feebd7,#fee5cc,#fedebf,#fdd7b0,#fdcea0,#fdc48f,#fdb97e,#fdae6c,#fda35c,#fc984c,#fb8d3d,#f8812f,#f47522,#ef6a17,#e85e0e,#e05408,#d54b04,#c74303,#b73c02,#a83703,#9a3103,#8c2c04,#7f2704);
   border: solid black 1px;
 }
 
@@ -58,3 +58,7 @@
 .legend p {
   margin-left: 1em;
 }
+.dc-chart .axis text {
+  font-size:14px;
+}
+.dc-chart g.row text {fill: black;}

@@ -14,7 +14,7 @@ async function histogram1(facts){
   let histogram = dc.barChart("#ceara_hist");
 
   histogram
-    .height(400)
+    .height(300)
     .dimension(ageDimension)
     .group(ageCount)
     .x(d3.scaleLinear().domain([0, 100]))
@@ -36,11 +36,11 @@ async function lineplot(facts) {
     .height(300)
     .dimension(SeriesDim)
     .group(SeriesDim.group())
-    .margins({top: 10, right: 10, bottom: 40, left: 30})
+    .margins({top: 10, right:20, bottom: 40, left: 40})
     .x(monthScale)
     .renderDataPoints(true)
-    .elasticY(true);
-
+    .elasticY(true)
+    .xAxis().ticks(12).tickFormat(d3.timeFormat("%b"))
     lineChart.xAxisLabel("Data (dia)");
     lineChart.yAxisLabel("Número de CVLI");
 };
@@ -202,9 +202,10 @@ async function heatmapgeral(facts){
   var sexDaydim_2 = facts.dimension(function(item){return [item.Mes,item.DiaDaSemana]})
   var sexDayGroup_2 = sexDaydim_2.group();
   let heatmap = new dc.HeatMap("#heatmapgeral_days")
-  var ykeyorder = {'Janeiro':1,'Fevereiro':2,'Março':3,'Abril':4,'Maio':5,'Junho':6,'Julho':7,'Agosto':8,'Setembro':9,'Outubro':10,'Novembro':11,'Dezembro':12}
-  var xkeyorder = {'Segunda':1,'Terça':2,'Quarta':3,'Quinta':4,'Sexta':5,'Sábado':6,'Domingo':7}
-  let colorScale = d3.scaleSequential([0,100], d3.interpolateBlues);
+  var ykeyorder = {'Jan':1,'Fev':2,'Mar':3,'Abr':4,'Mai':5,'Jun':6,'Jul':7,'Ago':8,'Set':9,'Out':10,'Nov':11,'Dez':12}
+  var xkeyorder = {'Seg':1,'Ter':2,'Qua':3,'Qui':4,'Sex':5,'Sáb':6,'Dom':7}
+  let colorScale = d3.scaleSequential([0,100], d3.interpolateOranges);
+  console.log(colorScale(100))
 
   heatmap
     .height(300)
@@ -249,7 +250,7 @@ async function heatmapgeral(facts){
 
 async function main() {
   let facts = await d3
-    .csv('data/CVLI_2020_CE.csv')
+    .csv('data/CVLI_2020_map.csv')
     .then(function(data){
       let parseDate = d3.utcParse("%d/%m/%Y");
 

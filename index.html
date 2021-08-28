@@ -14,7 +14,6 @@
       crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     <link rel="stylesheet" href="maps_style.css">
-
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crossfilter2/1.5.4/crossfilter.min.js"
       integrity="sha512-YTblpiY3CE9zQBW//UMBfvDF2rz6bS7vhhT5zwzqQ8P7Z0ikBGG8hfcRwmmg3IuLl2Rwk95NJUEs1HCQD4EDKQ=="
@@ -25,11 +24,13 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
       integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
       crossorigin=""></script>
-    <script src="javascripts/ceara_ais.js"></script>
+    <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+    
     <script src="javascripts/crime_maps.js"></script>
     <script src="javascripts/fortaleza_ais.js"></script>
     <script src="javascripts/feminicides.js"></script>
     <script src="javascripts/mvi_in_brazil.js"></script>
+    <script src="javascripts/ceara_ais.js"></script>
   </head>
 
   <body>
@@ -52,7 +53,7 @@
       <section class="section">
         <h1 class="title">Distribuição dos CVLI nos municípios cearenses</h1>
         <div class="box">
-          Descrever o que os dados apresentam sobre os municípios.
+          Os CVLI 
 
         </div>
         <div class="box">
@@ -84,14 +85,11 @@
           </div>
           <div class="columns">
 
-            <div class="column is-full">
+            <div class="column is-half">
               <h2 class="subtitle">CVLI no tempo</h2>
               <div id="vitimas_mes"></div>
             </div>
-            </div>
-            <div class="columns">
-
-            <div class="column is-full">
+            <div class="column is-half">
               <h2 class="subtitle">CVLIs por dia da semana para cada mes</h2>
               <div id="heatmapgeral_days"></div>
               <div id="city-heatmap-legend"></div>
@@ -117,30 +115,22 @@
             </div>
           </div>
 
-          <div class="columns">
-            <div class="column is-full">
-              <div class="box">
-                "As Áreas Integradas de Segurança (AIS) compõem as unidades administrativas da segurança pública do Estado e são administradas por meio de uma gestão compartilhada entre as vinculadas da Secretaria da Segurança Pública e Defesa Social (SSPDS-CE)."
-              </br>
-              <p id="demo"><b>Mapa e gráfico de barra estão considerando a Taxa de CVLI por 100.000 mill habitantes</b></p>
-              </div>
-
-            </div>
-
-          </div>
+          
           <div class="box">
             <div class="columns">
-              <div class="is-one-fifth"><div id="ais_map"></div></div>
-              <div class="is-one-fifth"><div id="bar_ais"></div></div>
-              <div class="is-one-fifth"><div id="hist_ais"></div></div>
-            </div>
-            <div class="columns">
-              <div class="column is-full"><div id="vitimas_ais"></div></div>
-            </div>
-            <div class="columns">
-              <div class="column is-full">
-                <div id="heatmap_days"></div>
+              <div class="is-one-third"><h2 class="subtitle">Distribuição dos casos pelas AISs</h2><div id="ais_map"></div></div>
+              <div class="is-one-third"><h2 class="subtitle">Ranking das AIS</h2><div id="bar_ais"></div></div>
+              
+              <div class="is-one-third">
+                <h2 class="subtitle">Casos ocorridos por dia e mês</h2><div id="heatmap_days"></div>
                 <div id="ceara-heatmap-legend"></div>
+            </div>
+          </div>
+            <div class="columns">
+              <div class="column is-half"><h2 class="subtitle">Distribuição dos casos pelo tempo</h2><div id="vitimas_ais"></div></div>
+           
+              <div class="column is-half">
+                <div id="hist_ais"><h2 class="subtitle">Distribuição das Idades das Vítimas</h2></div></div>
               </div>
             </div>
             <span class="is-italic is-size-6">Fonte: SSPDS-CE e IBGE.</span>
@@ -176,17 +166,16 @@
         </div>
         <div class="box">
           <div class="columns">
-            <div class="is-one-fifth"><div id="ais_fortaleza"></div></div>
-            <div class="is-one-fifth"><div id="bar_fortaleza"></div></div>
-            <div class="is-one-fifth"><div id="hist_fortaleza"></div></div>
+            <div class="is-one-third"><p class="subtitle">Taxa em cada AIS </p><div id="ais_fortaleza"></div></div>
+            <div class="is-one-third"><h2 class="subtitle">Ranking das AIS</h2><div id="bar_fortaleza"></div></div>
+            <div class="is-one-third"><h2 class="subtitle">Distribuição dos casos pelos dias e meses</h2><div id="heatmap_fortaleza"></div>
+              <div id="fortaleza-heatmap-legend"></div></div>
           </div>
           <div class="columns">
-            <div class="column is-full"><div id="vitimas_fortaleza"></div></div>
-          </div>
-          <div class="columns">
-            <div class="column is-full">
-              <div id="heatmap_fortaleza"></div>
-              <div id="fortaleza-heatmap-legend"></div>
+            <div class="column is-half"><h2 class="subtitle">Distribuição dos casos pelo tempo</h2><div id="vitimas_fortaleza"></div></div>
+            <div class="column is-half">
+               <h2 class="subtitle">Idades das Vítimas</h2><div id="hist_fortaleza"> 
+              </div>
             </div>
           </div>
           <span class="is-italic is-size-6">Fonte: SSPDS-CE e IBGE.</span>

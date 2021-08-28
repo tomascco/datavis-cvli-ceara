@@ -91,13 +91,15 @@ async function ceara_lineplot(facts){
   let lineChart = dc.lineChart(document.querySelector('#vitimas_ais'));
 
   lineChart
-    .height(300)
+    .height(250)
+    .width(600)
     .dimension(SeriesDim)
     .group(SeriesDim.group())
-    .margins({top: 10, right:0, bottom: 40, left: 25})
+    .margins({top: 10, right:20, bottom: 40, left: 40})
     .x(monthScale)
-    .renderDataPoints(true)
-    .elasticY(true);
+    .elasticY(true)
+    .xAxis().ticks(12).tickFormat(d3.timeFormat("%b"))
+    
 
     lineChart.xAxisLabel("Data (dia)");
     lineChart.yAxisLabel("Número de CVLI");
@@ -109,6 +111,15 @@ async function weaponControls_ceara(facts) {
   weaponControls
     .dimension(weaponDimension)
     .group(weaponDimension.group())
+}
+function AddXAxis(chartToUpdate, displayText){
+    chartToUpdate.svg()
+                .append("text")
+                .attr("class", "x-axis-label")
+                .attr("text-anchor", "middle")
+                .attr("x", chartToUpdate.width()/2)
+                .attr("y", chartToUpdate.height()-3.5)
+                .text(displayText);
 }
 function rowChart(facts,pop_ais){
 
@@ -133,11 +144,11 @@ function rowChart(facts,pop_ais){
   })
   console.log(ais_group.all())
   rChart
-  .height(400)
-  .width(300)
+  .height(300)
+  .width(400)
   .dimension(ais_dim)
   .group(ais_group)
-  .margins({top: 0, right: 20, bottom: 20, left: 10})
+  .margins({top: 0, right: 60, bottom: 20, left: 10})
   .x(xScale_ais)
   .elasticX(true)
   .on("filtered", function(chart,filter){updateMarkers(idGroup,mun_ais)})
@@ -147,28 +158,17 @@ function rowChart(facts,pop_ais){
   let max_value=0;
   let ais_group = ais_dim.group()
   ais_group.all().forEach(function(item){
-  if(max_value<item.value*100000/AIS_pop.get(item.key)){max_value=item.value*100000/pop_Ais.get(item.key)}
+  if(max_value<item.value*100000/pop_ais.get(item.key)){max_value=item.value*100000/pop_ais.get(item.key)}
     item.value = item.value*100000/pop_ais.get(item.key)
   })
   let min_value =max_value
 
-  ais_group.all().forEach(function(item){
+    ais_group.all().forEach(function(item){
     if(min_value>item.value*100000/pop_ais.get(item.key)){min_value=item.value*100000/pop_ais.get(item.key)}
   })
-  rChart.group(ais_group)
-})
-dc.renderAll()
-function AddXAxis(chartToUpdate, displayText){
-chartToUpdate.svg()
-            .append("text")
-            .attr("class", "x-axis-label")
-            .attr("text-anchor", "middle")
-            .attr("x", chartToUpdate.width()/2)
-            .attr("y", chartToUpdate.height()-4.5)
-            .text(displayText);
-
-}
-AddXAxis(rChart, "Taxa de CVLI por 100 mill");
+    rChart.group(ais_group)
+  })
+  return rChart
 }
 function histogram_ceara(facts){
   ageDimension = facts.dimension(d => d.IDADE);
@@ -177,15 +177,14 @@ function histogram_ceara(facts){
     let histogram = dc.barChart("#hist_ais");
 
     histogram
-      .height(400)
+      .height(320)
       .dimension(ageDimension)
-      .margins({top: 10, right: 10, bottom: 30, left: 40})
+      .margins({top: 20, right: 20, bottom: 30, left: 30})
       .group(ageCount)
-      .x(d3.scaleLinear().domain([0, 100]))
-      .elasticY(true);
-
-    histogram.xAxisLabel("Idade");
-    histogram.yAxisLabel("Count");
+      .x(d3.scaleLinear().domain([0, 90]))
+      .elasticY(true)
+      histogram.xAxisLabel("Idade",20);
+      histogram.yAxisLabel("Count",20);
 }
 async function renderMap_ceara(facts) {
   let pop_mun = await d3.csv("data/pop_est@3.csv",
@@ -381,34 +380,36 @@ async function ceara_heatmap(facts){
   var sexDaydim_2 = facts.dimension(function(item){return [item.Mes,item.DiaDaSemana]})
   var sexDayGroup_2 = sexDaydim_2.group();
   let heatmap = new dc.HeatMap("#heatmap_days")
-  var ykeyorder = {'Janeiro':1,'Fevereiro':2,'Março':3,'Abril':4,'Maio':5,'Junho':6,'Julho':7,'Agosto':8,'Setembro':9,'Outubro':10,'Novembro':11,'Dezembro':12}
-  var xkeyorder = {'Segunda':1,'Terça':2,'Quarta':3,'Quinta':4,'Sexta':5,'Sábado':6,'Domingo':7}
+  var ykeyorder = {'Jan':1,'Fev':2,'Mar':3,'Abr':4,'Mai':5,'Jun':6,'Jul':7,'Ago':8,'Set':9,'Out':10,'Nov':11,'Dez':12}
+  var xkeyorder = {'Seg':1,'Ter':2,'Qua':3,'Qui':4,'Sex':5,'Sáb':6,'Dom':7}
 
   heatmap
+    .width(270)
     .height(300)
     .dimension(sexDaydim_2)
     .group(sexDayGroup_2)
-    .margins({top: 0, right:20 , bottom: 30, left:120})
-    .keyAccessor(function(d) { return d.key[0]; })
-    .valueAccessor(function(d) { return d.key[1]; })
+    .margins({ top: 0, right: 30, bottom: 30, left: 50 })
+    .keyAccessor(function(d) { return d.key[1]; })
+    .valueAccessor(function(d) { return d.key[0]; })
     .colorAccessor(function(d) { return +d.value; })
-    .colOrdering((a,b) => ykeyorder[a] - ykeyorder[b])
-    .rowOrdering((a,b) => xkeyorder[a] - xkeyorder[b])
+    .colOrdering((a,b) => xkeyorder[a] - xkeyorder[b])
+    .rowOrdering((a,b) => ykeyorder[a] - ykeyorder[b])
     .title(function(d) {
           return "Mês: " + d.key[0] + "\n" +
                 "Dia da Semana:  " + d.key[1] + "\n" +
                 "Número de CVLI: " + d.value})
-    .colors(d3.scaleSequential([0,100], d3.interpolateBlues))
+    .colors(d3.scaleSequential([0,100], d3.interpolateOranges))
     .calculateColorDomain()
     .on('preRedraw', function(chart) {
       chart.calculateColorDomain();
+      console.log(chart.colors().domain())
       updateHeatmapLegend(chart.colors().domain());
     });
 
   function updateHeatmapLegend(domain) {
     let numberFormatter = d3.format("d");
     let content = `
-      <i class="gradient"></i> ${numberFormatter(domain[0])}-${numberFormatter(domain[1])} Ocorrências
+      <i class="gradient"></i> <b>${numberFormatter(domain[0])}-${numberFormatter(domain[1])} Ocorrências
     `;
 
     let container = document.querySelector('#ceara-heatmap-legend');
@@ -473,11 +474,12 @@ async function main() {
 
   ceara_lineplot(facts);
   renderMap_ceara(facts);
-  rowChart(facts,pop_ais);
+  let rChart=rowChart(facts,pop_ais);
   histogram_ceara(facts);
   genderControls_ceara(facts);
   crimeControls_ceara(facts);
   weaponControls_ceara(facts);
   ceara_heatmap(facts)
   dc.renderAll();
+  AddXAxis(rChart, "This is the x-axis!");
 }
