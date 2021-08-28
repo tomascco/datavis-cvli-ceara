@@ -31,12 +31,14 @@ function weaponKindEstado(facts) {
     .ordinalColors(['#f8be34','#53A051','#006D9C'])
     .externalLabels(40)
     .label(function(d) { return d.key +" (" + Math.floor(d.value /soma * 100) + "%)"; });
-
 }
+
 function sexKind(facts) {
   let sexDimension = facts.dimension(d => d['SEXO']);
   let sexGroup = sexDimension.group();
   let pieChart_sex = dc.pieChart('#gender-controls');
+
+  let colorScale = d3.scaleOrdinal(['Masculino', 'Feminino'], ['#5f75de','#ffa3a3']);
 
   pieChart_sex
     .height(200)
@@ -45,9 +47,10 @@ function sexKind(facts) {
     .group(sexGroup)
     .renderLabel(false)
     .legend(dc.legend())
-    .ordinalColors(['#5f75de','#ffa3a3'])
+    .colors(colorScale);
 
 }
+
 function crimeKind(facts) {
   let crimeDimension = facts.dimension(d => d['NATUREZA DO FATO']);
   let crimeGroup = crimeDimension.group();
@@ -60,6 +63,8 @@ function crimeKind(facts) {
 
   let sum_all = crimeDimension.group().all().forEach(function(item){soma=soma+item.value})
   crimeDimension.group().all().forEach(function(item){item.value=item.value/sum_all})
+
+
   let crimePie = dc.pieChart('#kind-of-crime');
   crimePie
     .height(200)
@@ -108,33 +113,6 @@ async function lineplot(facts) {
     lineChart.xAxisLabel("Data (dia)");
     lineChart.yAxisLabel("Número de CVLI");
 };
-
-async function genderControls(facts) {
-  genderDimension = facts.dimension(d => d.SEXO);
-  let genderControls = dc.cboxMenu('#gender-controls');
-
-  genderControls
-    .dimension(genderDimension)
-    .group(genderDimension.group());
-}
-
-async function crimeControls(facts) {
-  crimeDimension = facts.dimension(d => d['NATUREZA DO FATO']);
-  let kindOfCrimeControls = dc.cboxMenu('#kind-of-crime');
-
-  kindOfCrimeControls
-    .dimension(crimeDimension)
-    .group(crimeDimension.group())
-}
-
-async function weaponControls(facts) {
-  let weaponDimension = facts.dimension(d => d['ARMA-UTILZADA']);
-  let weaponControls = dc.cboxMenu('#weapon-controls');
-
-  weaponControls
-    .dimension(weaponDimension)
-    .group(weaponDimension.group())
-}
 
 async function renderMap(facts) {
   let pop_mun = await d3

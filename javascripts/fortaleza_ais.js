@@ -14,7 +14,6 @@ let reds = d3.schemeReds[9];
 let bairro_AIS_map;
 let AIS_pop;
 let geoj
-//let facts;
 
 ready(main);
 
@@ -66,34 +65,6 @@ function updateMarkers2(idGroup, bairros_AIS) {
 
   hideLayer2(bairros_removed)
   showLayer2(bairros_selected)
-}
-
-async function genderControls3(facts) {
-  genderDimension = facts.dimension(d => d.SEXO);
-  let genderControls = dc.cboxMenu('#gender-controls_fortaleza');
-
-  genderControls
-    .dimension(genderDimension)
-    .group(genderDimension.group())
-    .multiple(true);
-}
-
-async function crimeControls3(facts) {
-  crimeDimension = facts.dimension(d => d['NATUREZA DO FATO']);
-  let kindOfCrimeControls = dc.cboxMenu('#kind-of-crime_fortaleza');
-
-  kindOfCrimeControls
-    .dimension(crimeDimension)
-    .group(crimeDimension.group())
-}
-
-async function weaponControls3(facts) {
-  weaponDimension = facts.dimension(d => d['ARMA-UTILZADA']);
-  let weaponControls = dc.cboxMenu('#weapon-controls_fortaleza');
-
-  weaponControls
-    .dimension(weaponDimension)
-    .group(weaponDimension.group())
 }
 
 function histogram3(facts) {
@@ -373,6 +344,7 @@ async function renderMap3(facts, crime_scale2, AIS_pop, map_AIS_count, bairro_AI
   }
 
 }
+
 function weaponKind_fortaleza(facts) {
   weaponDimension = facts.dimension(d => d['ARMA-UTILZADA']);
   weaponGroup = weaponDimension.group();
@@ -397,12 +369,14 @@ function weaponKind_fortaleza(facts) {
     .ordinalColors(['#f8be34','#53A051','#006D9C'])
     .externalLabels(40)
     .label(function(d) { return d.key +" (" + Math.floor(d.value /soma * 100) + "%)"; });
-
 }
+
 function sexKind_fortaleza(facts) {
   let sexDimension = facts.dimension(d => d['SEXO']);
   let sexGroup = sexDimension.group();
   let pieChart_sex = dc.pieChart('#gender-controls_fortaleza');
+
+  let colorScale = d3.scaleOrdinal(['Masculino', 'Feminino'], ['#5f75de','#ffa3a3']);
 
   pieChart_sex
     .height(200)
@@ -411,9 +385,9 @@ function sexKind_fortaleza(facts) {
     .group(sexGroup)
     .renderLabel(false)
     .legend(dc.legend())
-    .ordinalColors(['#5f75de','#ffa3a3'])
-
+    .colors(colorScale);
 }
+
 function crimeKind_fortaleza(facts) {
   let crimeDimension = facts.dimension(d => d['NATUREZA DO FATO']);
   let crimeGroup = crimeDimension.group();
@@ -435,8 +409,8 @@ function crimeKind_fortaleza(facts) {
     .renderLabel(false)
     .legend(dc.legend().gap(5).legendText(d => crime_type_name.get(d.name)))
     .ordinalColors(['#36e9fe','#38c7a6','#f9f871','#766aaf'])
-
 }
+
 function lineplot_3(facts,crime_scale2) {
   let SeriesDim = facts.dimension(d => d3.timeMonth(d.dtg));
 

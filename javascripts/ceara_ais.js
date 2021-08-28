@@ -29,7 +29,6 @@ function hideLayer(municipios){
 }
 }
 
-
 async function updateMarkers(idGroup,mun_ais){
 
   let ids = idGroup.all()
@@ -62,34 +61,6 @@ async function updateMarkers(idGroup,mun_ais){
   showLayer(municipios_selected)
 }
 
-async function genderControls_ceara(facts) {
-  genderDimension = facts.dimension(d => d.SEXO);
-  let genderControls = dc.cboxMenu('#gender-controls_ais');
-
-  genderControls
-    .dimension(genderDimension)
-    .group(genderDimension.group())
-    .multiple(true);
-}
-
-async function crimeControls_ceara(facts) {
-  crimeDimension = facts.dimension(d => d['NATUREZA DO FATO']);
-  let kindOfCrimeControls = dc.cboxMenu('#kind-of-crime_ais');
-
-  kindOfCrimeControls
-    .dimension(crimeDimension)
-    .group(crimeDimension.group())
-}
-
-async function weaponControls_ceara(facts) {
-  weaponDimension = facts.dimension(d => d['ARMA-UTILZADA']);
-  let weaponControls = dc.cboxMenu('#weapon-controls_ais');
-
-  weaponControls
-    .dimension(weaponDimension)
-    .group(weaponDimension.group())
-}
-
 function weaponKind_ceara(facts) {
   weaponDimension = facts.dimension(d => d['ARMA-UTILZADA']);
   weaponGroup = weaponDimension.group();
@@ -112,6 +83,8 @@ function sexKind_ceara(facts) {
   let sexGroup = sexDimension.group();
   let pieChart_sex = dc.pieChart('#gender-controls_ais');
 
+  let colorScale = d3.scaleOrdinal(['Masculino', 'Feminino'], ['#5f75de','#ffa3a3'])
+
   pieChart_sex
     .height(200)
     .innerRadius(70)
@@ -119,7 +92,7 @@ function sexKind_ceara(facts) {
     .group(sexGroup)
     .renderLabel(false)
     .legend(dc.legend())
-    .ordinalColors(['#5f75de','#ffa3a3'])
+    .colors(colorScale);
 }
 
 function crimeKind_ceara(facts) {
