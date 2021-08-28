@@ -67,7 +67,9 @@ function weaponKind_ceara(facts) {
   let weapon_names = [];
   weaponDimension.group().all().forEach(function(d){weapon_names.push(d.key)})
   let w_bar = dc.pieChart('#weapon-controls_ais');
-  let weapon_scale = d3.scaleOrdinal().domain(weapon_names)
+
+  let weapon_scale = d3.scaleOrdinal(['Arma branca', 'Arma de fogo', 'Outros meios'], ['#f8be34','#53A051','#006D9C']);
+
   w_bar
     .height(200)
     .innerRadius(70)
@@ -75,7 +77,7 @@ function weaponKind_ceara(facts) {
     .group(weaponGroup)
     .renderLabel(false)
     .legend(dc.legend())
-    .ordinalColors(['#f8be34','#53A051','#006D9C'])
+    .colors(weapon_scale);
 }
 
 function sexKind_ceara(facts) {

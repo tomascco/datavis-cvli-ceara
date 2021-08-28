@@ -14,7 +14,8 @@ function weaponKindEstado(facts) {
   let soma=0
   weaponDimension.group().all().forEach(function(d){soma = d.value+soma;weapon_names.push(d.key)})
   let w_bar = dc.pieChart('#weapon-controls');
-  let weapon_scale = d3.scaleOrdinal().domain(weapon_names)
+  let weapon_scale = d3.scaleOrdinal(['Arma branca', 'Arma de fogo', 'Outros meios'], ['#f8be34','#53A051','#006D9C']);
+
   w_bar
     .height(200)
     .innerRadius(70)
@@ -28,7 +29,7 @@ function weaponKindEstado(facts) {
     .group(weaponGroup)
     .renderLabel(false)
     .legend(dc.legend())
-    .ordinalColors(['#f8be34','#53A051','#006D9C'])
+    .colors(weapon_scale)
     .externalLabels(40)
     .label(function(d) { return d.key +" (" + Math.floor(d.value /soma * 100) + "%)"; });
 }

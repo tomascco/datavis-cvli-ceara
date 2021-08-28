@@ -51,16 +51,16 @@ async function citiesChart(facts) {
                 .attr('dx', '-30')
                 .attr('transform', " translate(0,5) rotate(-45)");
             });
-    
 
     barChart.xAxisLabel("Localidade");
     barChart.yAxisLabel("Taxa");
-
 }
 
 function weaponKind(facts) {
   weaponDimension = facts.dimension(d => d['ARMA-UTILZADA']);
   weaponGroup = weaponDimension.group();
+
+  let weapon_scale = d3.scaleOrdinal(['Arma branca', 'Arma de fogo', 'Outros meios'], ['#f8be34','#53A051','#006D9C']);
 
   pieChart = dc.pieChart('#weapon-kind');
 
@@ -68,7 +68,7 @@ function weaponKind(facts) {
     .dimension(weaponDimension)
     .group(weaponGroup)
     .height(200)
-    .ordinalColors(['#f8be34','#53A051','#006D9C'])
+    .colors(weapon_scale)
     .legend(dc.legend().highlightSelected(true));
 }
 
