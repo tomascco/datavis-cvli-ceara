@@ -25,7 +25,7 @@
       integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
       crossorigin=""></script>
     <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
-    
+
     <script src="javascripts/crime_maps.js"></script>
     <script src="javascripts/fortaleza_ais.js"></script>
     <script src="javascripts/feminicides.js"></script>
@@ -36,23 +36,21 @@
   <body>
     <section class="hero is-danger is-halfheight">
       <div class="hero-body">
-        <div class="container has-text-centered">
+        <div class="container has-text-centered is-flex is-flex-direction-column is-align-items-center">
           <h1 class="title">CVLI no Ceará em 2020</h1>
-        </div>
-        <div class="column">
-          <div class="box">
-            "Entende-se por CVLI a soma de crimes de Homicídio
-            Doloso/Feminicídio, Lesão corporal seguida de morte e Roubo seguido de morte (Latrocínio). A quantidade será definida pela soma de todos os homicídios classificados como dolosos isto é, praticados voluntária ou intencionalmente, por qualquer instrumento ou meio, de todas as lesões intencionais que resultaram em morte e de todos os latrocínios praticados."
+          <div class="column is-half">
+            <div class="box is-italic">
+              "Entende-se por Crimes Violentos Letais Intencionais (CVLI), a soma de crimes de Homicídio
+              Doloso/Feminicídio, Lesão corporal seguida de morte e Roubo seguido de morte (Latrocínio). A quantidade será definida pela soma de todos os homicídios classificados como dolosos isto é, praticados voluntária ou intencionalmente, por qualquer instrumento ou meio, de todas as lesões intencionais que resultaram em morte e de todos os latrocínios praticados."
+            </div>
           </div>
         </div>
-    </div>
-
+      </div>
     </section>
 
     <div class="container">
       <section class="section">
         <h1 class="title">Distribuição dos CVLI nos municípios cearenses</h1>
-        <div class="box"></div>
         <div class="box">
           <div class="columns">
             <div class="column is-one-third">
@@ -80,7 +78,6 @@
             </div>
           </div>
           <div class="columns">
-          
             <div class="column is-half">
               <h2 class="subtitle">CVLI no tempo</h2>
               <div id="vitimas_mes"></div>
@@ -92,10 +89,24 @@
           </div>
           <span class="is-italic is-size-6">Fonte: SSPDS-CE e IBGE.</span>
       </section>
+    </div>
 
+    <section class="hero is-danger is-halfheight">
+      <div class="hero-body">
+        <div class="container has-text-centered is-flex is-flex-direction-column is-align-items-center">
+          <h1 class="title">Áreas Integradas de Segurança (AIS)</h1>
+          <div class="column is-half">
+            <div class="box is-italic">
+              As Áreas Integradas de Segurança compõem as unidades administrativas da segurança pública do Estado e são administradas por meio de uma gestão compartilhada entre as vinculadas da Secretaria da Segurança Pública e Defesa Social (SSPDS-CE).
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
+    <div class="container">
       <section class="section">
-        <h1 class="title">CVLI Nas Areas de Segurança Integrada (AIS) do Interior</h1>
+        <h1 class="title">CVLI nas AIS do Interior</h1>
           <div class="box">
             <div class="columns">
               <div class="column is-one-third">
@@ -113,7 +124,7 @@
             <div class="columns">
               <div class="is-one-third"><h2 class="subtitle">Taxa em cada AIS</h2><div id="ais_map"></div></div>
               <div class="is-one-third"><h2 class="subtitle">Ranking das AIS</h2><div id="bar_ais"></div></div>
-              
+
               <div class="is-one-third">
                 <h2 class="subtitle">Nº de CVLI por dia e mês</h2><div id="heatmap_days"></div>
                 <div id="ceara-heatmap-legend"></div>
@@ -126,11 +137,11 @@
           </div>
         </div>
         <span class="is-italic is-size-6">Fonte: SSPDS-CE e IBGE.</span>
-      </section>      
+      </section>
 
 
       <section class="section">
-        <h1 class="title">CVLI Nas Diferentes AIS de Fortaleza</h1>
+        <h1 class="title">CVLI nas AIS de Fortaleza</h1>
         <div class="box">
           <div class="columns">
             <div class="column is-one-third">
@@ -145,15 +156,6 @@
           </div>
         </div>
 
-        <div class="columns">
-          <div class="column is-full">
-            <div class="box">
-              Descriçao sobre a cidade de Fortaleza e Suas AIS
-            </div>
-
-          </div>
-
-        </div>
         <div class="box">
           <div class="columns">
             <div class="is-one-third"><p class="subtitle">Taxa em cada AIS </p><div id="ais_fortaleza"></div></div>
@@ -167,7 +169,7 @@
           <div class="columns">
             <div class="column is-half"><h2 class="subtitle">Distribuição das CVLI pelo tempo</h2><div id="vitimas_fortaleza"></div></div>
             <div class="column is-half">
-                <h2 class="subtitle">Distribuição das idades das vítimas</h2><div id="hist_fortaleza"> 
+                <h2 class="subtitle">Distribuição das idades das vítimas</h2><div id="hist_fortaleza">
               </div>
             </div>
           </div>
@@ -176,9 +178,9 @@
       </section>
 
       <section class="section">
+        <h1 class="title">Em destaque: Feminicídios</h1>
+        <h2 class="subtitle">Feminicídios são crimes praticados contra mulheres por razões da condição do gênero feminino.</h2>
         <div class="box">
-          <h1 class="title">Em destaque: Feminicídios</h1>
-          <h2 class="subtitle">Feminicídios são crimes praticados contra mulheres por razões da condição do gênero feminino.</h2>
           <div class="columns">
             <div class="column is-full">
               <div id="feminicides-by-city"></div>
