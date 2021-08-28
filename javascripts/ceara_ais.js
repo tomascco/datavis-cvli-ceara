@@ -107,10 +107,10 @@ function weaponKind_ceara(facts) {
     .dimension(weaponDimension)
     .group(weaponGroup)
     .renderLabel(false)
-    .legend(dc.legend().x(120).y(70))
+    .legend(dc.legend())
     .ordinalColors(['#f8be34','#53A051','#006D9C'])
-
 }
+
 function sexKind_ceara(facts) {
   let sexDimension = facts.dimension(d => d['SEXO']);
   let sexGroup = sexDimension.group();
@@ -122,10 +122,10 @@ function sexKind_ceara(facts) {
     .dimension(sexDimension)
     .group(sexGroup)
     .renderLabel(false)
-    .legend(dc.legend().x(120).y(70))
+    .legend(dc.legend())
     .ordinalColors(['#5f75de','#ffa3a3'])
-
 }
+
 function crimeKind_ceara(facts) {
   let crimeDimension = facts.dimension(d => d['NATUREZA DO FATO']);
   let crimeGroup = crimeDimension.group();
@@ -145,9 +145,8 @@ function crimeKind_ceara(facts) {
     .dimension(crimeDimension)
     .group(crimeGroup)
     .renderLabel(false)
-    .legend(dc.legend().x(120).y(70).gap(5).legendText(function (d){console.log(d);return crime_type_name.get(d.name)}))
+    .legend(dc.legend().gap(5).legendText(function (d){console.log(d);return crime_type_name.get(d.name)}))
     .ordinalColors(['#36e9fe','#38c7a6','#f9f871','#766aaf'])
-
 }
 
 
@@ -213,7 +212,6 @@ function rowChart(facts,pop_ais){
   .elasticX(true)
   .on("filtered", function(chart,filter){updateMarkers(idGroup,mun_ais)})
   .colors(crime_scale_ceara)
-  .title(d=>'Número de CVLI:\n'+d.value*pop_ais.get(d.key))
   .colorAccessor(function(item){return item.value;});
   rChart.on('preRedraw', function() {
   let max_value=0;
@@ -502,20 +500,16 @@ async function main() {
     .then(data => data.filter(d => typeof(d.IDADE) === 'number' && !isNaN(d.IDADE)))
     .then(data=>data.filter(d=>!(d.MUNICIPIO=='Fortaleza')))
     .then(data => crossfilter(data));
-    let pop_ais = await d3
-  .csv("data/AIS_pop.csv", item => {
+  let pop_ais = await d3.csv("data/AIS_pop.csv", item => {
     item.POP = parseInt(item.POP);
-
     return item;
-  }) .then(function(data){
+  }).then(function(data){
     let map_mun = new Map();
-
-    data.forEach(item => {
-      map_mun.set(item["AIS"], item["POP"])
-    });
-
+      data.forEach(item => {
+        map_mun.set(item["AIS"], item["POP"])
+      });
     return map_mun;
-});
+    });
     let ais_dim = facts.dimension(d=>d.AIS)
     let ais_group = ais_dim.group()
     let max_value =0;
@@ -543,5 +537,5 @@ async function main() {
   sexKind_ceara(facts)
   ceara_heatmap(facts)
   dc.renderAll();
-  AddXAxis(rChart, "This is the x-axis!");
+  //AddXAxis(rChart, "This is the x-axis!");
 }
