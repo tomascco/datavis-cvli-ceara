@@ -397,7 +397,7 @@ function weaponKind_fortaleza(facts) {
     .dimension(weaponDimension)
     .group(weaponGroup)
     .renderLabel(false)
-    .legend(dc.legend().x(120).y(70))
+    .legend(dc.legend())
     .ordinalColors(['#f8be34','#53A051','#006D9C'])
     .externalLabels(40)
     .label(function(d) { return d.key +" (" + Math.floor(d.value /soma * 100) + "%)"; });
@@ -414,7 +414,7 @@ function sexKind_fortaleza(facts) {
     .dimension(sexDimension)
     .group(sexGroup)
     .renderLabel(false)
-    .legend(dc.legend().x(120).y(70))
+    .legend(dc.legend())
     .ordinalColors(['#5f75de','#ffa3a3'])
 
 }
@@ -437,7 +437,7 @@ function crimeKind_fortaleza(facts) {
     .dimension(crimeDimension)
     .group(crimeGroup)
     .renderLabel(false)
-    .legend(dc.legend().x(120).y(70).gap(5).legendText(function (d){console.log(d);return crime_type_name.get(d.name)}))
+    .legend(dc.legend().gap(5).legendText(function (d){console.log(d);return crime_type_name.get(d.name)}))
     .ordinalColors(['#36e9fe','#38c7a6','#f9f871','#766aaf'])
 
 }
