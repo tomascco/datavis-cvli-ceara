@@ -61,6 +61,7 @@ function weaponKind(facts) {
     .dimension(weaponDimension)
     .group(weaponGroup)
     .height(200)
+    .ordinalColors(['#f8be34','#53A051','#006D9C'])
     .legend(dc.legend().highlightSelected(true));
 }
 
