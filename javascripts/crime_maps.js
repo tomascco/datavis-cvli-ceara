@@ -64,6 +64,7 @@ function crimeKind(facts) {
   let sum_all = crimeDimension.group().all().forEach(function(item){soma=soma+item.value})
   crimeDimension.group().all().forEach(function(item){item.value=item.value/sum_all})
 
+  let colorScale = d3.scaleOrdinal(crime_type_name.keys(), ['#36e9fe','#38c7a6','#f9f871','#766aaf']);
 
   let crimePie = dc.pieChart('#kind-of-crime');
   crimePie
@@ -73,8 +74,8 @@ function crimeKind(facts) {
     .group(crimeGroup)
     .renderLabel(false)
     .legend(dc.legend().legendText(d => crime_type_name.get(d.name)))
-    .ordinalColors(['#36e9fe','#38c7a6','#f9f871','#766aaf'])
-}
+    .colors(colorScale);
+  }
 
 async function histogram1(facts){
   ageDimension = facts.dimension(d => d.IDADE);

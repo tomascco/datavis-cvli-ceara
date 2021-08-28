@@ -107,6 +107,9 @@ function crimeKind_ceara(facts) {
 
   let sum_all = crimeDimension.group().all().forEach(function(item){soma=soma+item.value})
   crimeDimension.group().all().forEach(function(item){item.value=item.value/sum_all})
+
+  let colorScale = d3.scaleOrdinal(crime_type_name.keys(), ['#36e9fe','#38c7a6','#f9f871','#766aaf']);
+
   let crimePie = dc.pieChart('#kind-of-crime_ais');
   crimePie
     .height(200)
@@ -115,9 +118,8 @@ function crimeKind_ceara(facts) {
     .group(crimeGroup)
     .renderLabel(false)
     .legend(dc.legend().gap(5).legendText(d => crime_type_name.get(d.name)))
-    .ordinalColors(['#36e9fe','#38c7a6','#f9f871','#766aaf'])
-}
-
+    .colors(colorScale);
+  }
 
 async function ceara_lineplot(facts){
   let SeriesDim = facts.dimension(d => d3.timeMonth(d.dtg));
