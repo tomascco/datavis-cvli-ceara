@@ -44,7 +44,14 @@ async function citiesChart(facts) {
     .x(d3.scaleBand().domain(citiesGroup.top(Infinity).map(d => d.key)))
     .gap(20)
     .xUnits(dc.units.ordinal)
-    .height(400);
+    .margins({ top: 0, right: 30, bottom: 100, left: 30 })
+    .height(400)
+    .renderlet(function (chart) {
+                chart.selectAll("g.x text")
+                .attr('dx', '-30')
+                .attr('transform', " translate(0,5) rotate(-45)");
+            });
+    
 
     barChart.xAxisLabel("Localidade");
     barChart.yAxisLabel("Taxa");
