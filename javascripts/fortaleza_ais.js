@@ -31,7 +31,6 @@ function hideLayer2(municipios) {
   for (let i = 0; i < municipios.length; i++) {
     var lg = mapLayerGroups2[municipios[i]];
     if (!(typeof lg === 'undefined')) {
-      console.log(lg)
       map2.removeLayer(lg);
     }
   }
@@ -39,7 +38,6 @@ function hideLayer2(municipios) {
 
 function updateMarkers2(idGroup, bairros_AIS) {
   let ids = idGroup.all()
-  //console.log(ids)
   let todisplay = new Array(ids.length) //preallocate array to be faster
   let mc = 0; //counter of used positions in the array
   for (let i = 0; i < ids.length; i++) {
@@ -51,7 +49,6 @@ function updateMarkers2(idGroup, bairros_AIS) {
     }
   }
 
-  //console.log(todisplay)
   let ais_groups = [];
 
   for (let i = 0; i < todisplay.length; i++) {
@@ -217,7 +214,7 @@ function horizontalbar2(facts_fortaleza, ais_groups, bairros_AIS, AIS_pop, crime
     .colors(crime_scale2)
     .colorAccessor(function (item) { return item.value; });
   })
-  
+
   dc.renderAll()
   function AddXAxis(chartToUpdate, displayText) {
     chartToUpdate.svg()
@@ -249,13 +246,13 @@ async function renderMap3(facts, crime_scale2, AIS_pop, map_AIS_count, bairro_AI
       return map_mun;
     });
 
- 
+
 
 
 
   let geo_mun = await d3.json("data/FortalezaBairros.geojson");
-  
-  
+
+
   map2 = L.map('ais_fortaleza').setView([-3.792614, -38.515877], 10.5)
 
   L.tileLayer("https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png", {
@@ -384,7 +381,6 @@ function weaponKind_fortaleza(facts) {
   weaponDimension.group().all().forEach(function(d){soma = d.value+soma;weapon_names.push(d.key)})
   let w_bar = dc.pieChart('#weapon-controls_fortaleza');
   let weapon_scale = d3.scaleOrdinal().domain(weapon_names)
-  console.log(weapon_names)
   w_bar
     .height(200)
     .innerRadius(70)
@@ -407,7 +403,7 @@ function sexKind_fortaleza(facts) {
   let sexDimension = facts.dimension(d => d['SEXO']);
   let sexGroup = sexDimension.group();
   let pieChart_sex = dc.pieChart('#gender-controls_fortaleza');
-  
+
   pieChart_sex
     .height(200)
     .innerRadius(70)
@@ -425,7 +421,7 @@ function crimeKind_fortaleza(facts) {
   let crime_type_name=new Map()
   crime_type_name.set('HOMICIDIO DOLOSO','Homicídio Doloso')
   crime_type_name.set('LESAO CORPORAL SEGUIDA DE MORTE', 'LCSM')
-  crime_type_name.set('ROUBO SEGUIDO DE MORTE (LATROCINIO)','Latrocínio') 
+  crime_type_name.set('ROUBO SEGUIDO DE MORTE (LATROCINIO)','Latrocínio')
   crime_type_name.set('FEMINICÍDIO','Feminicídio')
 
   let sum_all = crimeDimension.group().all().forEach(function(item){soma=soma+item.value})
@@ -437,7 +433,7 @@ function crimeKind_fortaleza(facts) {
     .dimension(crimeDimension)
     .group(crimeGroup)
     .renderLabel(false)
-    .legend(dc.legend().gap(5).legendText(function (d){console.log(d);return crime_type_name.get(d.name)}))
+    .legend(dc.legend().gap(5).legendText(d => crime_type_name.get(d.name)))
     .ordinalColors(['#36e9fe','#38c7a6','#f9f871','#766aaf'])
 
 }
@@ -458,7 +454,7 @@ function lineplot_3(facts,crime_scale2) {
     .renderDataPoints(true)
     .elasticY(true)
      .xAxis().ticks(12).tickFormat(d3.timeFormat("%b"))
-     
+
   lineChart.xAxisLabel("Data (dia)");
   lineChart.yAxisLabel("Número de CVLI");
 }
@@ -536,7 +532,7 @@ async function main() {
   //crimeControls3(facts_fortaleza);
   //weaponControls3(facts_fortaleza);
   weaponKind_fortaleza(facts_fortaleza)
-  sexKind_fortaleza(facts_fortaleza); 
+  sexKind_fortaleza(facts_fortaleza);
   crimeKind_fortaleza(facts_fortaleza);
   dc.renderAll();
 }

@@ -30,7 +30,6 @@ function ready(fn) {
 
   async function updateMarkers(idGroup,AIS_df){
     let ids = idGroup.all()
-    //console.log(ids)
     let todisplay = new Array(ids.length) //preallocate array to be faster
     let mc = 0; //counter of used positions in the array
     for (let i = 0; i < ids.length; i++) {
@@ -41,7 +40,6 @@ function ready(fn) {
         mc = mc + 1
       }
     }
-    //console.log(todisplay)
     var ais_groups =[];
 
     for(let i=0;i<todisplay.length;i++){
@@ -100,7 +98,6 @@ async function hideLayer(municipios){
     for(let i=0;i<municipios.length;i++){
       var lg = mapLayerGroups_ceara[municipios[i]];
       if(!(typeof lg === 'undefined')){
-      console.log(lg)
       }
   }
 }

@@ -16,16 +16,16 @@ async function main() {
 
       data.forEach(function(item){
         item.dtg = parseDate(item.DATA);
-        
+
       });
-    
+
       return data;
   });
 
   let dataset_fortaleza= [];
 
   let fil_dat=dataset.filter(function(d) {
-  
+
   return d.MUNICIPIO.indexOf('Fortaleza') !== -1
   })
 
@@ -49,19 +49,19 @@ async function main() {
     map_AIS_count.set(item.key,+item.value)
   })
   let min_value =max_value
-  
+
   ais_group.all().forEach(function(item){
     if(min_value>item.value){min_value=item.value}
-  })  
+  })
   //let crime_scale = d3.scaleQuantize().domain([0, max_value+20]).range(d3.schemeReds[9])
 
-  let ais_groups=['AIS 1','AIS 2','AIS 3', 'AIS 4', 'AIS 5', 'AIS 6', 'AIS 7', 'AIS 8', 'AIS 9', 'AIS 10']  
+  let ais_groups=['AIS 1','AIS 2','AIS 3', 'AIS 4', 'AIS 5', 'AIS 6', 'AIS 7', 'AIS 8', 'AIS 9', 'AIS 10']
   let colors=d3.schemeCategory10;
   let colorScale_ais = d3.scaleOrdinal()
                  .domain(ais_groups)
                  .range(colors)
-  
-  
+
+
   let facts = crossfilter(dataset);
   let crime_scale = d3.scaleSequential().domain([min_value-10, max_value+20])
   .interpolator(d3.interpolateReds)
@@ -72,12 +72,12 @@ async function main() {
   bairros_AIS.forEach(function(d){bairro_AIS_map.set(d.Nome,d.AIS)})
 
   let map = L.map('fortaleza_map').setView([-3.792614,-38.515877], 11)
-  
+
   L.tileLayer("https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png", {
                 attribution:`&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>,
-                Map tiles by &copy; <a href="https://carto.com/attribution">CARTO</a>`,     
+                Map tiles by &copy; <a href="https://carto.com/attribution">CARTO</a>`,
                 maxZoom:17}).addTo(map)
-  
+
 
   let infoControl = L.control()
 
@@ -93,21 +93,21 @@ async function main() {
 
 
   infoControl.addTo(map);
-  
+
   let svg = d3.select("#fortaleza_map");
-  
+
   function highlightFeature(e) {
       let layer = e.target;
-  
+
     layer.setStyle({
           weight: 2,
           color: '#fcba03',
           dashArray: '',
           fillOpacity: 0.7
     });
-    
-    layer.bindTooltip( 
-        '<b>' + layer.feature.properties.NOME +'</br>'+bairro_AIS_map.get(layer.feature.properties.NOME)+ '</b><br />').openTooltip();  
+
+    layer.bindTooltip(
+        '<b>' + layer.feature.properties.NOME +'</br>'+bairro_AIS_map.get(layer.feature.properties.NOME)+ '</b><br />').openTooltip();
 
     if (!L.Browser.ie && !L.Browser.opera) {
       layer.bringToFront();
@@ -115,7 +115,7 @@ async function main() {
 
     infoControl.update(layer.feature);
   }
-  
+
   let geoj;
 
   function horizontalbar(dataset,ais_groups,colorScale_ais,bairros_AIS){
@@ -135,7 +135,7 @@ async function main() {
 
   let idDim = facts_id.dimension(d=>[d.ID,d.AIS])
   let idGroup= idDim.group()
-  
+
   let xScale_ais = d3.scaleOrdinal().domain(ais_groups)
   let rChart = dc.rowChart(document.querySelector("#bar_chart"));
   let max_value=0;
@@ -145,15 +145,15 @@ async function main() {
     map_AIS_count.set(item.key,+item.value)
   })
   let min_value =max_value
-  
+
   ais_group.all().forEach(function(item){
     if(min_value>item.value){min_value=item.value}
-  })  
+  })
 
   let crime_scale = d3.scaleSequential(d3.interpolateReds)
                       .domain([min_value-40, max_value+40])
 
-  
+
   rChart
       .height(400)
       .dimension(AISfor)
@@ -174,38 +174,36 @@ async function main() {
                 .attr("x", chartToUpdate.width()/2)
                 .attr("y", chartToUpdate.height()-3.5)
                 .text(displayText);
-                
+
   }
     AddXAxis(rChart, "This is the x-axis!");
   }
   function showLayer(bairros) {
-    for(let i=0;i<bairros.length;i++){  
+    for(let i=0;i<bairros.length;i++){
       var lg = mapLayerGroups[bairros[i]];
       map.addLayer(lg);
-     }   
+    }
 }
   function hideLayer(bairros) {
-    for(let i=0;i<bairros.length;i++){  
+    for(let i=0;i<bairros.length;i++){
       var lg = mapLayerGroups[bairros[i]];
-      map.removeLayer(lg);  
+      map.removeLayer(lg);
   }
-}  
+}
 horizontalbar(dataset,ais_groups,colorScale_ais)
 function updateMarkers(idGroup){
-  
+
   let ids = idGroup.all()
-  //console.log(ids)
   let todisplay = new Array(ids.length) //preallocate array to be faster
   let mc = 0; //counter of used positions in the array
   for (let i = 0; i < ids.length; i++) {
-  let tId = ids[i]; 
-    if(tId.value > 0){ 
+  let tId = ids[i];
+    if(tId.value > 0){
       //when an element is filtered, it has value > 0
       todisplay[mc] =tId.key[1]
       mc = mc + 1
     }
   }
-  //console.log(todisplay)
   let ais_groups =[];
 
   for(let i=0;i<todisplay.length;i++){
@@ -219,11 +217,11 @@ function updateMarkers(idGroup){
                     if(ais_groups.indexOf(item.AIS) > -1){bairros_selected.push(item.Nome)}
                     if(!(ais_groups.indexOf(item.AIS) > -1)){bairros_removed.push(item.Nome)}
                     }
-                    
-                    
-  
+
+
+
   )
-  hideLayer(bairros_removed) 
+  hideLayer(bairros_removed)
   showLayer(bairros_selected)
 
   }
@@ -263,8 +261,8 @@ function updateMarkers(idGroup){
         });
     lg.addLayer(layer);
   }
-  
-  
+
+
   geoj=L.geoJson(bairros, {
         style: style,
         onEachFeature: onEachFeature,

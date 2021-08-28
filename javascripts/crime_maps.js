@@ -67,7 +67,7 @@ function crimeKind(facts) {
     .dimension(crimeDimension)
     .group(crimeGroup)
     .renderLabel(false)
-    .legend(dc.legend().legendText(function (d){console.log(d);return crime_type_name.get(d.name)}))
+    .legend(dc.legend().legendText(d => crime_type_name.get(d.name)))
     .ordinalColors(['#36e9fe','#38c7a6','#f9f871','#766aaf'])
 }
 

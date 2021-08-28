@@ -18,13 +18,12 @@ function showLayer(municipios){
     if(!(typeof lg === 'undefined')){
     map.addLayer(lg);
     }
-   }
+  }
 }
 function hideLayer(municipios){
   for(let i=0;i<municipios.length;i++){
     var lg = mapLayerGroup[municipios[i]];
     if(!(typeof lg === 'undefined')){
-    console.log(lg)
     map.removeLayer(lg);
     }
 }
@@ -34,7 +33,6 @@ function hideLayer(municipios){
 async function updateMarkers(idGroup,mun_ais){
 
   let ids = idGroup.all()
-  //console.log(ids)
   let todisplay = new Array(ids.length) //preallocate array to be faster
   let mc = 0; //counter of used positions in the array
   for (let i = 0; i < ids.length; i++) {
@@ -60,7 +58,6 @@ async function updateMarkers(idGroup,mun_ais){
                     if(ais_groups.indexOf(item.AIS) > -1){municipios_selected.push(item.MUNICIPIO)}
                     if(!(ais_groups.indexOf(item.AIS) > -1)){muncipios_removed.push(item.MUNICIPIO)}
                     })
-  console.log(municipios_selected)
   hideLayer(muncipios_removed)
   showLayer(municipios_selected)
 }
@@ -100,7 +97,6 @@ function weaponKind_ceara(facts) {
   weaponDimension.group().all().forEach(function(d){weapon_names.push(d.key)})
   let w_bar = dc.pieChart('#weapon-controls_ais');
   let weapon_scale = d3.scaleOrdinal().domain(weapon_names)
-  console.log(weapon_names)
   w_bar
     .height(200)
     .innerRadius(70)
@@ -115,7 +111,7 @@ function sexKind_ceara(facts) {
   let sexDimension = facts.dimension(d => d['SEXO']);
   let sexGroup = sexDimension.group();
   let pieChart_sex = dc.pieChart('#gender-controls_ais');
-  
+
   pieChart_sex
     .height(200)
     .innerRadius(70)
@@ -133,7 +129,7 @@ function crimeKind_ceara(facts) {
   let crime_type_name=new Map()
   crime_type_name.set('HOMICIDIO DOLOSO','Homicídio Doloso')
   crime_type_name.set('LESAO CORPORAL SEGUIDA DE MORTE', 'LCSM')
-  crime_type_name.set('ROUBO SEGUIDO DE MORTE (LATROCINIO)','Latrocínio') 
+  crime_type_name.set('ROUBO SEGUIDO DE MORTE (LATROCINIO)','Latrocínio')
   crime_type_name.set('FEMINICÍDIO','Feminicídio')
 
   let sum_all = crimeDimension.group().all().forEach(function(item){soma=soma+item.value})
@@ -145,7 +141,7 @@ function crimeKind_ceara(facts) {
     .dimension(crimeDimension)
     .group(crimeGroup)
     .renderLabel(false)
-    .legend(dc.legend().gap(5).legendText(function (d){console.log(d);return crime_type_name.get(d.name)}))
+    .legend(dc.legend().gap(5).legendText(d => crime_type_name.get(d.name)))
     .ordinalColors(['#36e9fe','#38c7a6','#f9f871','#766aaf'])
 }
 
@@ -166,7 +162,7 @@ async function ceara_lineplot(facts){
     .x(monthScale)
     .elasticY(true)
     .xAxis().ticks(12).tickFormat(d3.timeFormat("%b"))
-    
+
 
     lineChart.xAxisLabel("Data (dia)");
     lineChart.yAxisLabel("Número de CVLI");
@@ -461,7 +457,6 @@ async function ceara_heatmap(facts){
     .calculateColorDomain()
     .on('preRedraw', function(chart) {
       chart.calculateColorDomain();
-      console.log(chart.colors().domain())
       updateHeatmapLegend(chart.colors().domain());
     });
 
