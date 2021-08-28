@@ -37,17 +37,18 @@ async function citiesChart(facts) {
   let citiesDimension = facts.dimension(d => d.MUNICIPIO);
   let citiesGroup = citiesDimension.group().reduceSum(d => 100000/pop_mun.get(d.MUNICIPIO));
 
-  let barChart = dc.barChart('#feminicides-by-city')
+  let barChart = dc.rowChart('#feminicides-by-city')
   barChart
+    .height(300)
+    .width(300)
     .dimension(citiesDimension)
     .group(citiesGroup)
+    .margins({ top: 0, right: 20, bottom: 20, left: 10 })
     .x(d3.scaleBand().domain(citiesGroup.top(Infinity).map(d => d.key)))
-    .gap(20)
-    .xUnits(dc.units.ordinal)
-    .height(400);
-
-    barChart.xAxisLabel("Localidade");
-    barChart.yAxisLabel("Taxa");
+    .elasticX(true)
+    .on("filtered", function(chart,filter){updateMarkers(idGroup,mun_ais)})
+    .colors('#7777')
+    .colorAccessor(function(item){return item.value;});
 
 }
 
