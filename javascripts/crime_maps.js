@@ -27,7 +27,7 @@ function weaponKindEstado(facts) {
     .dimension(weaponDimension)
     .group(weaponGroup)
     .renderLabel(false)
-    .legend(dc.legend().x(120).y(70))
+    .legend(dc.legend())
     .ordinalColors(['#f8be34','#53A051','#006D9C'])
     .externalLabels(40)
     .label(function(d) { return d.key +" (" + Math.floor(d.value /soma * 100) + "%)"; });
@@ -37,14 +37,14 @@ function sexKind(facts) {
   let sexDimension = facts.dimension(d => d['SEXO']);
   let sexGroup = sexDimension.group();
   let pieChart_sex = dc.pieChart('#gender-controls');
-  
+
   pieChart_sex
     .height(200)
     .innerRadius(70)
     .dimension(sexDimension)
     .group(sexGroup)
     .renderLabel(false)
-    .legend(dc.legend().x(120).y(70))
+    .legend(dc.legend())
     .ordinalColors(['#5f75de','#ffa3a3'])
 
 }
@@ -55,7 +55,7 @@ function crimeKind(facts) {
   let crime_type_name=new Map()
   crime_type_name.set('HOMICIDIO DOLOSO','Homicídio Doloso')
   crime_type_name.set('LESAO CORPORAL SEGUIDA DE MORTE', 'LCSM')
-  crime_type_name.set('ROUBO SEGUIDO DE MORTE (LATROCINIO)','Latrocínio') 
+  crime_type_name.set('ROUBO SEGUIDO DE MORTE (LATROCINIO)','Latrocínio')
   crime_type_name.set('FEMINICÍDIO','Feminicídio')
 
   let sum_all = crimeDimension.group().all().forEach(function(item){soma=soma+item.value})
@@ -67,7 +67,7 @@ function crimeKind(facts) {
     .dimension(crimeDimension)
     .group(crimeGroup)
     .renderLabel(false)
-    .legend(dc.legend().x(120).y(70).gap(5).legendText(function (d){console.log(d);return crime_type_name.get(d.name)}))
+    .legend(dc.legend().legendText(function (d){console.log(d);return crime_type_name.get(d.name)}))
     .ordinalColors(['#36e9fe','#38c7a6','#f9f871','#766aaf'])
 }
 
@@ -333,7 +333,7 @@ async function main() {
 
 
   heatmapgeral(facts);
-  
+
   weaponKindEstado(facts);
   sexKind(facts);
   crimeKind(facts);
