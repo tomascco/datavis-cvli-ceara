@@ -7,6 +7,70 @@ function ready(fn) {
 }
 ready(main);
 
+function weaponKindEstado(facts) {
+  weaponDimension = facts.dimension(d => d['ARMA-UTILZADA']);
+  weaponGroup = weaponDimension.group();
+  let weapon_names = [];
+  let soma=0
+  weaponDimension.group().all().forEach(function(d){soma = d.value+soma;weapon_names.push(d.key)})
+  let w_bar = dc.pieChart('#weapon-controls');
+  let weapon_scale = d3.scaleOrdinal().domain(weapon_names)
+  w_bar
+    .height(200)
+    .innerRadius(70)
+    .radius(140)
+    .on('pretransition', (chart) => {
+                    chart.selectAll('text.pie-slice').text(d =>  (
+                    dc.utils.printSingleValue((d.endAngle - d.startAngle) / (2 * Math.PI) * 100) + '%'
+                    ))
+                })
+    .dimension(weaponDimension)
+    .group(weaponGroup)
+    .renderLabel(false)
+    .legend(dc.legend().x(120).y(70))
+    .ordinalColors(['#f8be34','#53A051','#006D9C'])
+    .externalLabels(40)
+    .label(function(d) { return d.key +" (" + Math.floor(d.value /soma * 100) + "%)"; });
+
+}
+function sexKind(facts) {
+  let sexDimension = facts.dimension(d => d['SEXO']);
+  let sexGroup = sexDimension.group();
+  let pieChart_sex = dc.pieChart('#gender-controls');
+  
+  pieChart_sex
+    .height(200)
+    .innerRadius(70)
+    .dimension(sexDimension)
+    .group(sexGroup)
+    .renderLabel(false)
+    .legend(dc.legend().x(120).y(70))
+    .ordinalColors(['#5f75de','#ffa3a3'])
+
+}
+function crimeKind(facts) {
+  let crimeDimension = facts.dimension(d => d['NATUREZA DO FATO']);
+  let crimeGroup = crimeDimension.group();
+  let soma=0;
+  let crime_type_name=new Map()
+  crime_type_name.set('HOMICIDIO DOLOSO','Homicídio Doloso')
+  crime_type_name.set('LESAO CORPORAL SEGUIDA DE MORTE', 'LCSM')
+  crime_type_name.set('ROUBO SEGUIDO DE MORTE (LATROCINIO)','Latrocínio') 
+  crime_type_name.set('FEMINICÍDIO','Feminicídio')
+
+  let sum_all = crimeDimension.group().all().forEach(function(item){soma=soma+item.value})
+  crimeDimension.group().all().forEach(function(item){item.value=item.value/sum_all})
+  let crimePie = dc.pieChart('#kind-of-crime');
+  crimePie
+    .height(200)
+    .innerRadius(70)
+    .dimension(crimeDimension)
+    .group(crimeGroup)
+    .renderLabel(false)
+    .legend(dc.legend().x(120).y(70).gap(5).legendText(function (d){console.log(d);return crime_type_name.get(d.name)}))
+    .ordinalColors(['#36e9fe','#38c7a6','#f9f871','#766aaf'])
+}
+
 async function histogram1(facts){
   ageDimension = facts.dimension(d => d.IDADE);
   ageCount = ageDimension.group().reduceCount();
@@ -14,7 +78,7 @@ async function histogram1(facts){
   let histogram = dc.barChart("#ceara_hist");
 
   histogram
-    .height(300)
+    .height(250)
     .dimension(ageDimension)
     .group(ageCount)
     .x(d3.scaleLinear().domain([0, 100]))
@@ -33,7 +97,7 @@ async function lineplot(facts) {
   let lineChart = dc.lineChart('#vitimas_mes');
 
   lineChart
-    .height(300)
+    .height(250)
     .dimension(SeriesDim)
     .group(SeriesDim.group())
     .margins({top: 10, right:20, bottom: 40, left: 40})
@@ -64,7 +128,7 @@ async function crimeControls(facts) {
 }
 
 async function weaponControls(facts) {
-  weaponDimension = facts.dimension(d => d['ARMA-UTILZADA']);
+  let weaponDimension = facts.dimension(d => d['ARMA-UTILZADA']);
   let weaponControls = dc.cboxMenu('#weapon-controls');
 
   weaponControls
@@ -205,18 +269,17 @@ async function heatmapgeral(facts){
   var ykeyorder = {'Jan':1,'Fev':2,'Mar':3,'Abr':4,'Mai':5,'Jun':6,'Jul':7,'Ago':8,'Set':9,'Out':10,'Nov':11,'Dez':12}
   var xkeyorder = {'Seg':1,'Ter':2,'Qua':3,'Qui':4,'Sex':5,'Sáb':6,'Dom':7}
   let colorScale = d3.scaleSequential([0,100], d3.interpolateOranges);
-  console.log(colorScale(100))
 
   heatmap
     .height(300)
     .dimension(sexDaydim_2)
     .group(sexDayGroup_2)
     .margins({top: 0, right:20 , bottom: 30, left:120})
-    .keyAccessor(function(d) { return d.key[0]; })
-    .valueAccessor(function(d) { return d.key[1]; })
+    .keyAccessor(function(d) { return d.key[1]; })
+    .valueAccessor(function(d) { return d.key[0]; })
     .colorAccessor(function(d) { return +d.value; })
-    .colOrdering((a,b) => ykeyorder[a] - ykeyorder[b])
-    .rowOrdering((a,b) => xkeyorder[a] - xkeyorder[b])
+    .colOrdering((a,b) => xkeyorder[a] - xkeyorder[b])
+    .rowOrdering((a,b) => ykeyorder[a] - ykeyorder[b])
     .title(function(d) {
           return "Mês: " + d.key[0] + "\n" +
                   "Dia da Semana:  " + d.key[1] + "\n" +
@@ -268,9 +331,11 @@ async function main() {
   histogram1(facts);
   lineplot(facts);
 
-  genderControls(facts);
-  crimeControls(facts);
-  weaponControls(facts);
+
   heatmapgeral(facts);
+  
+  weaponKindEstado(facts);
+  sexKind(facts);
+  crimeKind(facts);
   dc.renderAll();
 }

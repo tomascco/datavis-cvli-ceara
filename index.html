@@ -52,10 +52,7 @@
     <div class="container">
       <section class="section">
         <h1 class="title">Distribuição dos CVLI nos municípios cearenses</h1>
-        <div class="box">
-          Os CVLI 
-
-        </div>
+        <div class="box"></div>
         <div class="box">
           <div class="columns">
             <div class="column is-one-third">
@@ -73,21 +70,8 @@
           <div class="columns">
             <div class="column is-half">
               <h2 class="subtitle">
-                Taxa de CVLI por município por 100.000 hab
-                <button class="button is-outlined is-small" id='clear-all'>Limpar filtro</button>
-              </h2>
-
+                Taxa por Município<button class="button is-outlined is-small" id='clear-all'>Limpar filtro</button></h2>
               <div id="ceara_map"></div>
-            </div>
-            <div class="column is-half">
-              <h2 class="subtitle">Distribuição das idades das vítimas</h2>
-              <div id="ceara_hist"></div></div>
-          </div>
-          <div class="columns">
-
-            <div class="column is-half">
-              <h2 class="subtitle">CVLI no tempo</h2>
-              <div id="vitimas_mes"></div>
             </div>
             <div class="column is-half">
               <h2 class="subtitle">CVLIs por dia da semana para cada mes</h2>
@@ -95,12 +79,23 @@
               <div id="city-heatmap-legend"></div>
             </div>
           </div>
+          <div class="columns">
+          
+            <div class="column is-half">
+              <h2 class="subtitle">CVLI no tempo</h2>
+              <div id="vitimas_mes"></div>
+            </div>
+            <div class="column is-half">
+              <h2 class="subtitle">Distribuição das idades das vítimas</h2>
+              <div id="ceara_hist"></div></div>
+            </div>
+          </div>
           <span class="is-italic is-size-6">Fonte: SSPDS-CE e IBGE.</span>
-        </div>
       </section>
 
+
       <section class="section">
-          <h1 class="title">CVLI Nas Areas de Segurança Integrada (AIS) do Interior</h1>
+        <h1 class="title">CVLI Nas Areas de Segurança Integrada (AIS) do Interior</h1>
           <div class="box">
             <div class="columns">
               <div class="column is-one-third">
@@ -114,28 +109,25 @@
               </div>
             </div>
           </div>
-
-          
           <div class="box">
             <div class="columns">
-              <div class="is-one-third"><h2 class="subtitle">Distribuição dos casos pelas AISs</h2><div id="ais_map"></div></div>
+              <div class="is-one-third"><h2 class="subtitle">Taxa em cada AIS</h2><div id="ais_map"></div></div>
               <div class="is-one-third"><h2 class="subtitle">Ranking das AIS</h2><div id="bar_ais"></div></div>
               
               <div class="is-one-third">
-                <h2 class="subtitle">Casos ocorridos por dia e mês</h2><div id="heatmap_days"></div>
+                <h2 class="subtitle">Nº de CVLI por dia e mês</h2><div id="heatmap_days"></div>
                 <div id="ceara-heatmap-legend"></div>
             </div>
           </div>
-            <div class="columns">
-              <div class="column is-half"><h2 class="subtitle">Distribuição dos casos pelo tempo</h2><div id="vitimas_ais"></div></div>
-           
+          <div class="columns">
+              <div class="column is-half"><h2 class="subtitle">Distribuição das CVLI pelo tempo</h2><div id="vitimas_ais"></div></div>
               <div class="column is-half">
-                <div id="hist_ais"><h2 class="subtitle">Distribuição das Idades das Vítimas</h2></div></div>
-              </div>
-            </div>
-            <span class="is-italic is-size-6">Fonte: SSPDS-CE e IBGE.</span>
+              <h2 class="subtitle">Distribuição das Idades das Vítimas</h2><div id="hist_ais"></div></div>
           </div>
-      </section>
+        </div>
+        <span class="is-italic is-size-6">Fonte: SSPDS-CE e IBGE.</span>
+      </section>      
+
 
       <section class="section">
         <h1 class="title">CVLI Nas Diferentes AIS de Fortaleza</h1>
@@ -156,9 +148,7 @@
         <div class="columns">
           <div class="column is-full">
             <div class="box">
-              Descriçao sobre a cidade de Fortaleza e Suas AISs
-            </br>
-            <p id="demo_2"><b>Mapa e gráfico de barra estão considerando a Taxa de CVLI por 100.000 mill habitantes</b></p>
+              Descriçao sobre a cidade de Fortaleza e Suas AIS
             </div>
 
           </div>
@@ -168,13 +158,16 @@
           <div class="columns">
             <div class="is-one-third"><p class="subtitle">Taxa em cada AIS </p><div id="ais_fortaleza"></div></div>
             <div class="is-one-third"><h2 class="subtitle">Ranking das AIS</h2><div id="bar_fortaleza"></div></div>
-            <div class="is-one-third"><h2 class="subtitle">Distribuição dos casos pelos dias e meses</h2><div id="heatmap_fortaleza"></div>
-              <div id="fortaleza-heatmap-legend"></div></div>
+            <div class="is-one-third">
+              <h3 class="subtitle">Nº de CVLI por dia e mês</h3>
+              <div id="heatmap_fortaleza"></div>
+              <div id="fortaleza-heatmap-legend"></div>
+            </div>
           </div>
           <div class="columns">
-            <div class="column is-half"><h2 class="subtitle">Distribuição dos casos pelo tempo</h2><div id="vitimas_fortaleza"></div></div>
+            <div class="column is-half"><h2 class="subtitle">Distribuição das CVLI pelo tempo</h2><div id="vitimas_fortaleza"></div></div>
             <div class="column is-half">
-               <h2 class="subtitle">Idades das Vítimas</h2><div id="hist_fortaleza"> 
+                <h2 class="subtitle">Distribuição das idades das vítimas</h2><div id="hist_fortaleza"> 
               </div>
             </div>
           </div>

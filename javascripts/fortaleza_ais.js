@@ -107,7 +107,6 @@ function histogram3(facts) {
 
   histogram
     .height(250)
-    .width(500)
     .dimension(ageDimension)
     .margins({ top: 10, right:40 , bottom: 40, left: 40 })
     .group(ageCount)
@@ -129,9 +128,11 @@ function heatmapdays2(facts) {
 
   heatmap_fortaleza
     .height(300)
+    .width(350)
     .dimension(sexDaydim_2)
     .group(sexDayGroup_2)
-    .margins({ top: 0, right: 30, bottom: 30, left: 55 })
+    .margins({ top: 0, right: 30, bottom: 30, left: 50 })
+
     .keyAccessor(function (d) { return d.key[1]; })
     .valueAccessor(function (d) { return d.key[0]; })
     .colorAccessor(function (d) { return +d.value; })
@@ -188,7 +189,7 @@ function horizontalbar2(facts_fortaleza, ais_groups, bairros_AIS, AIS_pop, crime
 
   rChart
     .height(300)
-    .width(200)
+    .width(300)
     .dimension(ais_dim)
     .group(ais_group)
     .margins({ top: 0, right: 20, bottom: 20, left: 10 })
@@ -255,7 +256,7 @@ async function renderMap3(facts, crime_scale2, AIS_pop, map_AIS_count, bairro_AI
   let geo_mun = await d3.json("data/FortalezaBairros.geojson");
   
   
-  map2 = L.map('ais_fortaleza').setView([-3.792614, -38.515877], 11)
+  map2 = L.map('ais_fortaleza').setView([-3.792614, -38.515877], 10.5)
 
   L.tileLayer("https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png", {
     attribution: `&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>,
@@ -379,19 +380,65 @@ function weaponKind_fortaleza(facts) {
   weaponDimension = facts.dimension(d => d['ARMA-UTILZADA']);
   weaponGroup = weaponDimension.group();
   let weapon_names = [];
-  weaponDimension.group().all().forEach(function(d){weapon_names.push(d.key)})
+  let soma=0
+  weaponDimension.group().all().forEach(function(d){soma = d.value+soma;weapon_names.push(d.key)})
   let w_bar = dc.pieChart('#weapon-controls_fortaleza');
   let weapon_scale = d3.scaleOrdinal().domain(weapon_names)
   console.log(weapon_names)
   w_bar
-    .width(200)
     .height(200)
-    .innerRadius(60)
+    .innerRadius(70)
+    .radius(140)
+    .on('pretransition', (chart) => {
+                    chart.selectAll('text.pie-slice').text(d =>  (
+                    dc.utils.printSingleValue((d.endAngle - d.startAngle) / (2 * Math.PI) * 100) + '%'
+                    ))
+                })
     .dimension(weaponDimension)
     .group(weaponGroup)
     .renderLabel(false)
-    .legend(dc.legend().x(65).y(70))
+    .legend(dc.legend().x(120).y(70))
     .ordinalColors(['#f8be34','#53A051','#006D9C'])
+    .externalLabels(40)
+    .label(function(d) { return d.key +" (" + Math.floor(d.value /soma * 100) + "%)"; });
+
+}
+function sexKind_fortaleza(facts) {
+  let sexDimension = facts.dimension(d => d['SEXO']);
+  let sexGroup = sexDimension.group();
+  let pieChart_sex = dc.pieChart('#gender-controls_fortaleza');
+  
+  pieChart_sex
+    .height(200)
+    .innerRadius(70)
+    .dimension(sexDimension)
+    .group(sexGroup)
+    .renderLabel(false)
+    .legend(dc.legend().x(120).y(70))
+    .ordinalColors(['#5f75de','#ffa3a3'])
+
+}
+function crimeKind_fortaleza(facts) {
+  let crimeDimension = facts.dimension(d => d['NATUREZA DO FATO']);
+  let crimeGroup = crimeDimension.group();
+  let soma=0;
+  let crime_type_name=new Map()
+  crime_type_name.set('HOMICIDIO DOLOSO','Homicídio Doloso')
+  crime_type_name.set('LESAO CORPORAL SEGUIDA DE MORTE', 'LCSM')
+  crime_type_name.set('ROUBO SEGUIDO DE MORTE (LATROCINIO)','Latrocínio') 
+  crime_type_name.set('FEMINICÍDIO','Feminicídio')
+
+  let sum_all = crimeDimension.group().all().forEach(function(item){soma=soma+item.value})
+  crimeDimension.group().all().forEach(function(item){item.value=item.value/sum_all})
+  let crimePie = dc.pieChart('#kind-of-crime_fortaleza');
+  crimePie
+    .height(200)
+    .innerRadius(70)
+    .dimension(crimeDimension)
+    .group(crimeGroup)
+    .renderLabel(false)
+    .legend(dc.legend().x(120).y(70).gap(5).legendText(function (d){console.log(d);return crime_type_name.get(d.name)}))
+    .ordinalColors(['#36e9fe','#38c7a6','#f9f871','#766aaf'])
 
 }
 function lineplot_3(facts,crime_scale2) {
@@ -485,9 +532,11 @@ async function main() {
   histogram3(facts_fortaleza);
   heatmapdays2(facts_fortaleza);
 
-  genderControls3(facts_fortaleza);
-  crimeControls3(facts_fortaleza);
-  weaponControls3(facts_fortaleza);
-  //weaponKind_fortaleza(facts_fortaleza)
+  //genderControls3(facts_fortaleza);
+  //crimeControls3(facts_fortaleza);
+  //weaponControls3(facts_fortaleza);
+  weaponKind_fortaleza(facts_fortaleza)
+  sexKind_fortaleza(facts_fortaleza); 
+  crimeKind_fortaleza(facts_fortaleza);
   dc.renderAll();
 }

@@ -83,6 +83,74 @@ async function crimeControls_ceara(facts) {
     .dimension(crimeDimension)
     .group(crimeDimension.group())
 }
+
+async function weaponControls_ceara(facts) {
+  weaponDimension = facts.dimension(d => d['ARMA-UTILZADA']);
+  let weaponControls = dc.cboxMenu('#weapon-controls_ais');
+
+  weaponControls
+    .dimension(weaponDimension)
+    .group(weaponDimension.group())
+}
+
+function weaponKind_ceara(facts) {
+  weaponDimension = facts.dimension(d => d['ARMA-UTILZADA']);
+  weaponGroup = weaponDimension.group();
+  let weapon_names = [];
+  weaponDimension.group().all().forEach(function(d){weapon_names.push(d.key)})
+  let w_bar = dc.pieChart('#weapon-controls_ais');
+  let weapon_scale = d3.scaleOrdinal().domain(weapon_names)
+  console.log(weapon_names)
+  w_bar
+    .height(200)
+    .innerRadius(70)
+    .dimension(weaponDimension)
+    .group(weaponGroup)
+    .renderLabel(false)
+    .legend(dc.legend().x(120).y(70))
+    .ordinalColors(['#f8be34','#53A051','#006D9C'])
+
+}
+function sexKind_ceara(facts) {
+  let sexDimension = facts.dimension(d => d['SEXO']);
+  let sexGroup = sexDimension.group();
+  let pieChart_sex = dc.pieChart('#gender-controls_ais');
+  
+  pieChart_sex
+    .height(200)
+    .innerRadius(70)
+    .dimension(sexDimension)
+    .group(sexGroup)
+    .renderLabel(false)
+    .legend(dc.legend().x(120).y(70))
+    .ordinalColors(['#5f75de','#ffa3a3'])
+
+}
+function crimeKind_ceara(facts) {
+  let crimeDimension = facts.dimension(d => d['NATUREZA DO FATO']);
+  let crimeGroup = crimeDimension.group();
+  let soma=0;
+  let crime_type_name=new Map()
+  crime_type_name.set('HOMICIDIO DOLOSO','Homicídio Doloso')
+  crime_type_name.set('LESAO CORPORAL SEGUIDA DE MORTE', 'LCSM')
+  crime_type_name.set('ROUBO SEGUIDO DE MORTE (LATROCINIO)','Latrocínio') 
+  crime_type_name.set('FEMINICÍDIO','Feminicídio')
+
+  let sum_all = crimeDimension.group().all().forEach(function(item){soma=soma+item.value})
+  crimeDimension.group().all().forEach(function(item){item.value=item.value/sum_all})
+  let crimePie = dc.pieChart('#kind-of-crime_ais');
+  crimePie
+    .height(200)
+    .innerRadius(70)
+    .dimension(crimeDimension)
+    .group(crimeGroup)
+    .renderLabel(false)
+    .legend(dc.legend().x(120).y(70).gap(5).legendText(function (d){console.log(d);return crime_type_name.get(d.name)}))
+    .ordinalColors(['#36e9fe','#38c7a6','#f9f871','#766aaf'])
+
+}
+
+
 async function ceara_lineplot(facts){
   let SeriesDim = facts.dimension(d => d3.timeMonth(d.dtg));
 
@@ -92,7 +160,7 @@ async function ceara_lineplot(facts){
 
   lineChart
     .height(250)
-    .width(600)
+    .width(500)
     .dimension(SeriesDim)
     .group(SeriesDim.group())
     .margins({top: 10, right:20, bottom: 40, left: 40})
@@ -104,14 +172,7 @@ async function ceara_lineplot(facts){
     lineChart.xAxisLabel("Data (dia)");
     lineChart.yAxisLabel("Número de CVLI");
 }
-async function weaponControls_ceara(facts) {
-  weaponDimension = facts.dimension(d => d['ARMA-UTILZADA']);
-  let weaponControls = dc.cboxMenu('#weapon-controls_ais');
 
-  weaponControls
-    .dimension(weaponDimension)
-    .group(weaponDimension.group())
-}
 function AddXAxis(chartToUpdate, displayText){
     chartToUpdate.svg()
                 .append("text")
@@ -142,17 +203,17 @@ function rowChart(facts,pop_ais){
   ais_group.all().forEach(function(item){
           if(min_value>item.value*100000/pop_ais.get(item.key)){min_value=item.value*100000/pop_ais.get(item.key)}
   })
-  console.log(ais_group.all())
   rChart
   .height(300)
-  .width(400)
+  .width(300)
   .dimension(ais_dim)
   .group(ais_group)
-  .margins({top: 0, right: 60, bottom: 20, left: 10})
+  .margins({ top: 0, right: 20, bottom: 20, left: 10 })
   .x(xScale_ais)
   .elasticX(true)
   .on("filtered", function(chart,filter){updateMarkers(idGroup,mun_ais)})
   .colors(crime_scale_ceara)
+  .title(d=>'Número de CVLI:\n'+d.value*pop_ais.get(d.key))
   .colorAccessor(function(item){return item.value;});
   rChart.on('preRedraw', function() {
   let max_value=0;
@@ -177,7 +238,7 @@ function histogram_ceara(facts){
     let histogram = dc.barChart("#hist_ais");
 
     histogram
-      .height(320)
+      .height(250)
       .dimension(ageDimension)
       .margins({top: 20, right: 20, bottom: 30, left: 30})
       .group(ageCount)
@@ -384,7 +445,7 @@ async function ceara_heatmap(facts){
   var xkeyorder = {'Seg':1,'Ter':2,'Qua':3,'Qui':4,'Sex':5,'Sáb':6,'Dom':7}
 
   heatmap
-    .width(270)
+    .width(350)
     .height(300)
     .dimension(sexDaydim_2)
     .group(sexDayGroup_2)
@@ -476,9 +537,10 @@ async function main() {
   renderMap_ceara(facts);
   let rChart=rowChart(facts,pop_ais);
   histogram_ceara(facts);
-  genderControls_ceara(facts);
-  crimeControls_ceara(facts);
-  weaponControls_ceara(facts);
+
+  weaponKind_ceara(facts);
+  crimeKind_ceara(facts);
+  sexKind_ceara(facts)
   ceara_heatmap(facts)
   dc.renderAll();
   AddXAxis(rChart, "This is the x-axis!");
