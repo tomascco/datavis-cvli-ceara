@@ -363,37 +363,40 @@ async function renderMap3(facts, crime_scale2, AIS_pop, map_AIS_count, bairro_AI
 
 }
 
-function weaponKind_fortaleza(facts) {
-  weaponDimension = facts.dimension(d => d['ARMA-UTILZADA']);
-  weaponGroup = weaponDimension.group();
+function weaponKind_f(facts) {
+  let weaponDimension = facts.dimension(d => d['ARMA-UTILZADA']);
+  let weaponGroup = weaponDimension.group().reduceCount();
   let weapon_names = [];
   let soma=0
   weaponDimension.group().all().forEach(function(d){soma = d.value+soma;weapon_names.push(d.key)})
-  let w_bar_f = dc.pieChart('#weapon-controls_fortaleza');
-
+  let w_bar = dc.pieChart('#weapon-controls_fortaleza');
   let weapon_scale = d3.scaleOrdinal(['Arma branca', 'Arma de fogo', 'Outros meios'], ['#f8be34','#53A051','#006D9C']);
 
-  w_bar_f
+  w_bar
     .height(200)
     .innerRadius(70)
     .radius(140)
     .dimension(weaponDimension)
     .group(weaponGroup)
     .renderLabel(false)
-    .legend(dc.legend())
+    .legend(dc.legend().highlightSelected(true))
     .colors(weapon_scale)
-    .label(function(d) { return Math.floor(d.value /soma * 100)+"%" });
+    .label(function(d) { return (Math.round(d.value /soma * 100)).toFixed(2)+"%" })
+    .on('preRedraw', function(chart) {
+      let soma =0;
+      weaponDimension.group().all().forEach(function(item){soma=soma+item.value})
+      chart.group(weaponDimension.group())
+      .label(function(d) { return (Math.round(d.value /soma * 100)).toFixed(2)+"%" })
+    })
 }
 
-function sexKind_fortaleza(facts) {
+function sexKind_f(facts) {
   let sexDimension = facts.dimension(d => d['SEXO']);
   let sexGroup = sexDimension.group();
   let pieChart_sex = dc.pieChart('#gender-controls_fortaleza');
   let soma =0;
-  sexGroup.all().forEach(function(item){soma=soma+item.value})
-
   let colorScale = d3.scaleOrdinal(['Masculino', 'Feminino'], ['#5f75de','#ffa3a3']);
-
+  sexDimension.group().all().forEach(function(item){soma=soma+item.value})
   pieChart_sex
     .height(200)
     .innerRadius(70)
@@ -402,10 +405,16 @@ function sexKind_fortaleza(facts) {
     .renderLabel(false)
     .legend(dc.legend())
     .colors(colorScale)
-    .label(function(d) { return Math.floor(d.value /soma * 100)+"%" });
+     .label(function(d) { return (Math.round(d.value /soma * 100)).toFixed(2)+"%" })
+    .on('preRedraw', function(chart) {
+      let soma =0;
+      sexDimension.group().all().forEach(function(item){soma=soma+item.value})
+      chart.group(sexDimension.group())
+       .label(function(d) { return (Math.round(d.value /soma * 100)).toFixed(2)+"%" })
+    })
 }
 
-function crimeKind_fortaleza(facts) {
+function crimeKind_f(facts) {
   let crimeDimension = facts.dimension(d => d['NATUREZA DO FATO']);
   let crimeGroup = crimeDimension.group();
   let soma=0;
@@ -426,10 +435,17 @@ function crimeKind_fortaleza(facts) {
     .dimension(crimeDimension)
     .group(crimeGroup)
     .renderLabel(false)
-    .legend(dc.legend().gap(5).legendText(d => crime_type_name.get(d.name)))
+    .legend(dc.legend().legendText(d => crime_type_name.get(d.name)))
     .colors(colorScale)
-    .label(function(d) { return Math.floor(d.value /soma * 100)+"%" });
+     .label(function(d) { return (Math.round(d.value /soma * 100)).toFixed(2)+"%" })
+    .on('preRedraw', function(chart) {
+      let soma =0;
+      crimeDimension.group().all().forEach(function(item){soma=soma+item.value})
+      chart.group(crimeDimension.group())
+       .label(function(d) { return (Math.round(d.value /soma * 100)).toFixed(2)+"%" })
+    })
   }
+
 
 function lineplot_3(facts,crime_scale2) {
   let SeriesDim = facts.dimension(d => d3.timeMonth(d.dtg));
@@ -525,8 +541,8 @@ async function main() {
   //genderControls3(facts_fortaleza);
   //crimeControls3(facts_fortaleza);
   //weaponControls3(facts_fortaleza);
-  weaponKind_fortaleza(facts_fortaleza)
-  sexKind_fortaleza(facts_fortaleza);
-  crimeKind_fortaleza(facts_fortaleza);
+  weaponKind_f(facts_fortaleza)
+  sexKind_f(facts_fortaleza);
+  crimeKind_f(facts_fortaleza);
   dc.renderAll();
 }

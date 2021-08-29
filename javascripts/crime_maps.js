@@ -9,8 +9,8 @@ let map_general;
 ready(main_fortaleza);
 
 function weaponKindEstado(facts) {
-  weaponDimension = facts.dimension(d => d['ARMA-UTILZADA']);
-  weaponGroup = weaponDimension.group().reduceCount();
+  let weaponDimension = facts.dimension(d => d['ARMA-UTILZADA']);
+  let weaponGroup = weaponDimension.group().reduceCount();
   let weapon_names = [];
   let soma=0
   weaponDimension.group().all().forEach(function(d){soma = d.value+soma;weapon_names.push(d.key)})
@@ -26,8 +26,15 @@ function weaponKindEstado(facts) {
     .renderLabel(false)
     .legend(dc.legend().highlightSelected(true))
     .colors(weapon_scale)
-    .label(function(d) { return Math.floor(d.value /soma * 100)+"%" })
+    .label(function(d) { return (Math.round(d.value /soma * 100)).toFixed(2)+"%" })
+    .on('preRedraw', function(chart) {
+      let soma =0;
+      weaponDimension.group().all().forEach(function(item){soma=soma+item.value})
+      chart.group(weaponDimension.group())
+      .label(function(d) { return (Math.round(d.value /soma * 100)).toFixed(2)+"%" })
+    })
 }
+
 
 function sexKind(facts) {
   let sexDimension = facts.dimension(d => d['SEXO']);
@@ -44,9 +51,16 @@ function sexKind(facts) {
     .renderLabel(false)
     .legend(dc.legend())
     .colors(colorScale)
-    .label(function(d) { return Math.floor(d.value /soma * 100)+"%" });
-
+     .label(function(d) { return (Math.round(d.value /soma * 100)).toFixed(2)+"%" })
+    .on('preRedraw', function(chart) {
+      let soma =0;
+      sexDimension.group().all().forEach(function(item){soma=soma+item.value})
+      chart.group(sexDimension.group())
+       .label(function(d) { return (Math.round(d.value /soma * 100)).toFixed(2)+"%" })
+    })
 }
+
+
 
 function crimeKind(facts) {
   let crimeDimension = facts.dimension(d => d['NATUREZA DO FATO']);
@@ -71,7 +85,13 @@ function crimeKind(facts) {
     .renderLabel(false)
     .legend(dc.legend().legendText(d => crime_type_name.get(d.name)))
     .colors(colorScale)
-    .label(function(d) { return Math.floor(d.value /soma * 100)+"%" });
+     .label(function(d) { return (Math.round(d.value /soma * 100)).toFixed(2)+"%" })
+    .on('preRedraw', function(chart) {
+      let soma =0;
+      crimeDimension.group().all().forEach(function(item){soma=soma+item.value})
+      chart.group(crimeDimension.group())
+       .label(function(d) { return (Math.round(d.value /soma * 100)).toFixed(2)+"%" })
+    })
   }
 
 async function histogram1(facts,map_general){

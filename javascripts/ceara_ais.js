@@ -62,46 +62,55 @@ async function updateMarkers(idGroup,mun_ais){
 }
 
 function weaponKind_ceara(facts) {
-  weaponDimension = facts.dimension(d => d['ARMA-UTILZADA']);
-  weaponGroup = weaponDimension.group();
+  let weaponDimension = facts.dimension(d => d['ARMA-UTILZADA']);
+  let weaponGroup = weaponDimension.group().reduceCount();
   let weapon_names = [];
-  weaponDimension.group().all().forEach(function(d){weapon_names.push(d.key)})
+  let soma=0
+  weaponDimension.group().all().forEach(function(d){soma = d.value+soma;weapon_names.push(d.key)})
   let w_bar = dc.pieChart('#weapon-controls_ais');
-
   let weapon_scale = d3.scaleOrdinal(['Arma branca', 'Arma de fogo', 'Outros meios'], ['#f8be34','#53A051','#006D9C']);
-  let soma=0;
-  weaponGroup.all().forEach(function(item){soma=soma+item.value})
+
   w_bar
     .height(200)
     .innerRadius(70)
+    .radius(140)
     .dimension(weaponDimension)
     .group(weaponGroup)
     .renderLabel(false)
-    .legend(dc.legend())
+    .legend(dc.legend().highlightSelected(true))
     .colors(weapon_scale)
-    .label(function(d) { return Math.floor(d.value /soma * 100)+"%" });
+    .label(function(d) { return (Math.round(d.value /soma * 100)).toFixed(2)+"%" })
+    .on('preRedraw', function(chart) {
+      let soma =0;
+      weaponDimension.group().all().forEach(function(item){soma=soma+item.value})
+      chart.group(weaponDimension.group())
+      .label(function(d) { return (Math.round(d.value /soma * 100)).toFixed(2)+"%" })
+    })
 }
 
 function sexKind_ceara(facts) {
   let sexDimension = facts.dimension(d => d['SEXO']);
   let sexGroup = sexDimension.group();
-
   let pieChart_sex = dc.pieChart('#gender-controls_ais');
-  let soma=0;
-  sexGroup.all().forEach(function(item){soma=soma+item.value})
-  let colorScale = d3.scaleOrdinal(['Masculino', 'Feminino'], ['#5f75de','#ffa3a3'])
-
+  let soma =0;
+  let colorScale = d3.scaleOrdinal(['Masculino', 'Feminino'], ['#5f75de','#ffa3a3']);
+  sexDimension.group().all().forEach(function(item){soma=soma+item.value})
   pieChart_sex
     .height(200)
+    .innerRadius(70)
     .dimension(sexDimension)
     .group(sexGroup)
-    .innerRadius(70)
     .renderLabel(false)
     .legend(dc.legend())
     .colors(colorScale)
-    .label(function(d) { return Math.floor(d.value /soma * 100)+"%" });
+     .label(function(d) { return (Math.round(d.value /soma * 100)).toFixed(2)+"%" })
+    .on('preRedraw', function(chart) {
+      let soma =0;
+      sexDimension.group().all().forEach(function(item){soma=soma+item.value})
+      chart.group(sexDimension.group())
+       .label(function(d) { return (Math.round(d.value /soma * 100)).toFixed(2)+"%" })
+    })
 }
-
 function crimeKind_ceara(facts) {
   let crimeDimension = facts.dimension(d => d['NATUREZA DO FATO']);
   let crimeGroup = crimeDimension.group();
@@ -112,8 +121,7 @@ function crimeKind_ceara(facts) {
   crime_type_name.set('ROUBO SEGUIDO DE MORTE (LATROCINIO)','Latrocínio')
   crime_type_name.set('FEMINICÍDIO','Feminicídio')
 
-  let sum_all = crimeDimension.group().all().forEach(function(item){soma=soma+item.value})
-  crimeDimension.group().all().forEach(function(item){item.value=item.value/sum_all})
+  crimeDimension.group().all().forEach(function(item){soma=soma+item.value})
 
   let colorScale = d3.scaleOrdinal(crime_type_name.keys(), ['#36e9fe','#38c7a6','#f9f871','#766aaf']);
 
@@ -124,10 +132,17 @@ function crimeKind_ceara(facts) {
     .dimension(crimeDimension)
     .group(crimeGroup)
     .renderLabel(false)
-    .legend(dc.legend().gap(5).legendText(d => crime_type_name.get(d.name)))
+    .legend(dc.legend().legendText(d => crime_type_name.get(d.name)))
     .colors(colorScale)
-    .label(function(d) { return Math.floor(d.value /soma * 100)+"%" });
-  }
+     .label(function(d) { return (Math.round(d.value /soma * 100)).toFixed(2)+"%" })
+    .on('preRedraw', function(chart) {
+      let soma =0;
+      crimeDimension.group().all().forEach(function(item){soma=soma+item.value})
+      chart.group(crimeDimension.group())
+       .label(function(d) { return (Math.round(d.value /soma * 100)).toFixed(2)+"%" })
+    })
+}
+
 
 async function ceara_lineplot(facts){
   let SeriesDim = facts.dimension(d => d3.timeMonth(d.dtg));
