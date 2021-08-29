@@ -74,7 +74,7 @@ function crimeKind(facts) {
 
   crimeDimension.group().all().forEach(function(item){soma=soma+item.value})
 
-  let colorScale = d3.scaleOrdinal(crime_type_name.keys(), ['#0a98a8','#38c7a6','#02a127','#766aaf']);
+  let colorScale = d3.scaleOrdinal(crime_type_name.keys(), ['#0a98a8','#38c7a6','#a1239a','#766aaf']);
 
   let crimePie = dc.pieChart('#kind-of-crime');
   crimePie
