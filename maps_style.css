@@ -59,7 +59,7 @@
   margin-left: 1em;
 }
 .dc-chart .axis text {
-  font-size:12px;
+  font-size:10px;
 }
 .dc-chart g.row text {fill: black;}
 .dc-chart g.pie-slice {fill: black;}

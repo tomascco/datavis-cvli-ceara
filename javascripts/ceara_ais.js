@@ -93,7 +93,7 @@ function sexKind_ceara(facts) {
   let sexGroup = sexDimension.group();
   let pieChart_sex = dc.pieChart('#gender-controls_ais');
   let soma =0;
-  let colorScale = d3.scaleOrdinal(['Masculino', 'Feminino'], ['#5f75de','#ffa3a3']);
+  let colorScale = d3.scaleOrdinal(['Masculino', 'Feminino'], ['#1635c7','#e05353']);
   sexDimension.group().all().forEach(function(item){soma=soma+item.value})
   pieChart_sex
     .height(200)
@@ -123,7 +123,7 @@ function crimeKind_ceara(facts) {
 
   crimeDimension.group().all().forEach(function(item){soma=soma+item.value})
 
-  let colorScale = d3.scaleOrdinal(crime_type_name.keys(), ['#36e9fe','#38c7a6','#f9f871','#766aaf']);
+  let colorScale = d3.scaleOrdinal(crime_type_name.keys(), ['#0a98a8','#38c7a6','#02a127','#766aaf']);
 
   let crimePie = dc.pieChart('#kind-of-crime_ais');
   crimePie
