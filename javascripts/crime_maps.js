@@ -5,11 +5,12 @@ function ready(fn) {
     document.addEventListener('DOMContentLoaded', fn);
   }
 }
-ready(main);
+let map_general;
+ready(main_fortaleza);
 
 function weaponKindEstado(facts) {
   weaponDimension = facts.dimension(d => d['ARMA-UTILZADA']);
-  weaponGroup = weaponDimension.group();
+  weaponGroup = weaponDimension.group().reduceCount();
   let weapon_names = [];
   let soma=0
   weaponDimension.group().all().forEach(function(d){soma = d.value+soma;weapon_names.push(d.key)})
@@ -20,27 +21,21 @@ function weaponKindEstado(facts) {
     .height(200)
     .innerRadius(70)
     .radius(140)
-    .on('pretransition', (chart) => {
-                    chart.selectAll('text.pie-slice').text(d =>  (
-                    dc.utils.printSingleValue((d.endAngle - d.startAngle) / (2 * Math.PI) * 100) + '%'
-                    ))
-                })
     .dimension(weaponDimension)
     .group(weaponGroup)
     .renderLabel(false)
-    .legend(dc.legend())
+    .legend(dc.legend().highlightSelected(true))
     .colors(weapon_scale)
-    .externalLabels(40)
-    .label(function(d) { return d.key +" (" + Math.floor(d.value /soma * 100) + "%)"; });
+    .label(function(d) { return Math.floor(d.value /soma * 100)+"%" })
 }
 
 function sexKind(facts) {
   let sexDimension = facts.dimension(d => d['SEXO']);
   let sexGroup = sexDimension.group();
   let pieChart_sex = dc.pieChart('#gender-controls');
-
+  let soma =0;
   let colorScale = d3.scaleOrdinal(['Masculino', 'Feminino'], ['#5f75de','#ffa3a3']);
-
+  sexDimension.group().all().forEach(function(item){soma=soma+item.value})
   pieChart_sex
     .height(200)
     .innerRadius(70)
@@ -48,7 +43,8 @@ function sexKind(facts) {
     .group(sexGroup)
     .renderLabel(false)
     .legend(dc.legend())
-    .colors(colorScale);
+    .colors(colorScale)
+    .label(function(d) { return Math.floor(d.value /soma * 100)+"%" });
 
 }
 
@@ -62,8 +58,7 @@ function crimeKind(facts) {
   crime_type_name.set('ROUBO SEGUIDO DE MORTE (LATROCINIO)','Latrocínio')
   crime_type_name.set('FEMINICÍDIO','Feminicídio')
 
-  let sum_all = crimeDimension.group().all().forEach(function(item){soma=soma+item.value})
-  crimeDimension.group().all().forEach(function(item){item.value=item.value/sum_all})
+  crimeDimension.group().all().forEach(function(item){soma=soma+item.value})
 
   let colorScale = d3.scaleOrdinal(crime_type_name.keys(), ['#36e9fe','#38c7a6','#f9f871','#766aaf']);
 
@@ -75,10 +70,11 @@ function crimeKind(facts) {
     .group(crimeGroup)
     .renderLabel(false)
     .legend(dc.legend().legendText(d => crime_type_name.get(d.name)))
-    .colors(colorScale);
+    .colors(colorScale)
+    .label(function(d) { return Math.floor(d.value /soma * 100)+"%" });
   }
 
-async function histogram1(facts){
+async function histogram1(facts,map_general){
   ageDimension = facts.dimension(d => d.IDADE);
   ageCount = ageDimension.group().reduceCount();
 
@@ -89,7 +85,7 @@ async function histogram1(facts){
     .dimension(ageDimension)
     .group(ageCount)
     .x(d3.scaleLinear().domain([0, 100]))
-    .elasticY(true);
+    .elasticY(true)
 
   histogram.xAxisLabel("Idade");
   histogram.yAxisLabel("Count");
@@ -139,7 +135,7 @@ async function renderMap(facts) {
   d3.select('#clear-all').on('click', () => {
     cityDimension.filterAll();
     dc.redrawAll();
-    map.setView([-4.8864139104811946, -39.60018165919775], 7);
+    map_general.setView([-4.8864139104811946, -39.60018165919775], 7);
 
   });
 
@@ -156,21 +152,21 @@ async function renderMap(facts) {
   let colors = d3.schemeReds[9];
   let crime_scale = d3.scaleQuantize().domain([0, 249.96]).range(colors);
 
-  let map = L.map('ceara_map').setView([-4.8864139104811946, -39.60018165919775], 7)
+  map_general = L.map('ceara_map').setView([-4.8864139104811946, -39.60018165919775], 7)
 
   L.tileLayer("https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png", {
                 attribution:`&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>,
                 Map tiles by &copy; <a href="https://carto.com/attribution">CARTO</a>`,
-                maxZoom:17}).addTo(map)
+                maxZoom:17}).addTo(map_general)
 
   let geoj = L.geoJson(geo_mun,{
     style: style_ceara,
     onEachFeature: onEachFeature
-  }).addTo(map)
+  }).addTo(map_general)
 
   let legendControl = L.control({position: 'bottomright'});
 
-  legendControl.onAdd = function (_map) {
+  legendControl.onAdd = function (_map_general) {
     let div = L.DomUtil.create('div', 'info legend'),
       labels = [],
             n = colors.length,
@@ -188,12 +184,12 @@ async function renderMap(facts) {
     return div
   }
 
-  legendControl.addTo(map)
+  legendControl.addTo(map_general)
 
 
   function zoomToFeature(e) {
     cityDimension.filterExact(e.target.feature.properties.name);
-    map.fitBounds(e.target.getBounds());
+    map_general.fitBounds(e.target.getBounds());
 
     dc.redrawAll();
   }
@@ -240,6 +236,7 @@ async function renderMap(facts) {
       fillColor: crime_scale(map_tax.get(feature.properties.name))
     };
   }
+  
 }
 
 async function heatmapgeral(facts){
@@ -291,7 +288,7 @@ async function heatmapgeral(facts){
   updateHeatmapLegend(heatmap.colors().domain());
 }
 
-async function main() {
+async function main_fortaleza() {
   let facts = await d3
     .csv('data/CVLI_2020_map.csv')
     .then(function(data){
@@ -301,6 +298,7 @@ async function main() {
         item.dtg = parseDate(item.DATA);
         item.IDADE = parseInt(item.IDADE);
       });
+      
       return data;
     })
     .then(data => data.filter(d => typeof(d.IDADE) === 'number' && !isNaN(d.IDADE)))
@@ -308,7 +306,7 @@ async function main() {
 
   renderMap(facts);
 
-  histogram1(facts);
+  histogram1(facts,map_general);
   lineplot(facts);
 
 

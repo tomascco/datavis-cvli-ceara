@@ -62,3 +62,4 @@
   font-size:12px;
 }
 .dc-chart g.row text {fill: black;}
+.dc-chart g.pie-slice {fill: black;}

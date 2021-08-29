@@ -69,7 +69,8 @@ function weaponKind_ceara(facts) {
   let w_bar = dc.pieChart('#weapon-controls_ais');
 
   let weapon_scale = d3.scaleOrdinal(['Arma branca', 'Arma de fogo', 'Outros meios'], ['#f8be34','#53A051','#006D9C']);
-
+  let soma=0;
+  weaponGroup.all().forEach(function(item){soma=soma+item.value})
   w_bar
     .height(200)
     .innerRadius(70)
@@ -77,24 +78,28 @@ function weaponKind_ceara(facts) {
     .group(weaponGroup)
     .renderLabel(false)
     .legend(dc.legend())
-    .colors(weapon_scale);
+    .colors(weapon_scale)
+    .label(function(d) { return Math.floor(d.value /soma * 100)+"%" });
 }
 
 function sexKind_ceara(facts) {
   let sexDimension = facts.dimension(d => d['SEXO']);
   let sexGroup = sexDimension.group();
-  let pieChart_sex = dc.pieChart('#gender-controls_ais');
 
+  let pieChart_sex = dc.pieChart('#gender-controls_ais');
+  let soma=0;
+  sexGroup.all().forEach(function(item){soma=soma+item.value})
   let colorScale = d3.scaleOrdinal(['Masculino', 'Feminino'], ['#5f75de','#ffa3a3'])
 
   pieChart_sex
     .height(200)
-    .innerRadius(70)
     .dimension(sexDimension)
     .group(sexGroup)
+    .innerRadius(70)
     .renderLabel(false)
     .legend(dc.legend())
-    .colors(colorScale);
+    .colors(colorScale)
+    .label(function(d) { return Math.floor(d.value /soma * 100)+"%" });
 }
 
 function crimeKind_ceara(facts) {
@@ -120,7 +125,8 @@ function crimeKind_ceara(facts) {
     .group(crimeGroup)
     .renderLabel(false)
     .legend(dc.legend().gap(5).legendText(d => crime_type_name.get(d.name)))
-    .colors(colorScale);
+    .colors(colorScale)
+    .label(function(d) { return Math.floor(d.value /soma * 100)+"%" });
   }
 
 async function ceara_lineplot(facts){
@@ -175,20 +181,37 @@ function rowChart(facts,pop_ais){
   ais_group.all().forEach(function(item){
           if(min_value>item.value*100000/pop_ais.get(item.key)){min_value=item.value*100000/pop_ais.get(item.key)}
   })
+  let crime_scale_ceara_bar=d3.scaleQuantize().domain([min_value, max_value+20]).range(blues)
   rChart
   .height(300)
   .width(300)
   .dimension(ais_dim)
   .group(ais_group)
-  .margins({ top: 0, right: 20, bottom: 20, left: 10 })
+  .margins({ top: 0, right: 20, bottom: 20, left: 50 })
   .x(xScale_ais)
   .elasticX(true)
   .on("filtered", function(chart,filter){updateMarkers(idGroup,mun_ais)})
-  .colors(crime_scale_ceara)
-  .colorAccessor(function(item){return item.value;});
+  .colors(crime_scale_ceara_bar)
+  .colorAccessor(function(item){return item.value;})
+  .labelOffsetX(-10)
+  .on('renderlet', function (chart) {
+                            chart.selectAll("g.row  text")
+                                .style("text-anchor", "end")
+                                .call(function (t) {
+                                    t.each(function (d) {
+                                        var self = d3.select(this);
+                                        var text = self.text();
+                                        if (text.length > 18) {
+                                            self.text('');
+                                            text = text.substring(0, 18) + '..';
+                                            self.text(text);
+                                        }
+                                    })
+                                });
+                        })
   rChart.on('preRedraw', function() {
-  let max_value=0;
   let ais_group = ais_dim.group()
+  max_value =0;
   ais_group.all().forEach(function(item){
   if(max_value<item.value*100000/pop_ais.get(item.key)){max_value=item.value*100000/pop_ais.get(item.key)}
     item.value = item.value*100000/pop_ais.get(item.key)
@@ -198,7 +221,9 @@ function rowChart(facts,pop_ais){
     ais_group.all().forEach(function(item){
     if(min_value>item.value*100000/pop_ais.get(item.key)){min_value=item.value*100000/pop_ais.get(item.key)}
   })
-    rChart.group(ais_group)
+    crime_scale_ceara_bar = d3.scaleQuantize().domain([min_value, max_value+20]).range(blues)
+    rChart.group(ais_group).colors(crime_scale_ceara_bar).colorAccessor(function(item){return item.value;})
+    rChart.calculateColorDomain()
   })
   return rChart
 }
@@ -436,6 +461,7 @@ async function ceara_heatmap(facts){
       chart.calculateColorDomain();
       updateHeatmapLegend(chart.colors().domain());
     });
+
 
   function updateHeatmapLegend(domain) {
     let numberFormatter = d3.format("d");

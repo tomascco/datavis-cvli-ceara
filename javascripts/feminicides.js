@@ -35,31 +35,43 @@ async function citiesChart(facts) {
   });
 
   let citiesDimension = facts.dimension(d => d.MUNICIPIO);
-  let citiesGroup = citiesDimension.group().reduceSum(d => 100000/pop_mun.get(d.MUNICIPIO));
-
-  let barChart = dc.barChart('#feminicides-by-city')
-  barChart
+  let citiesGroup = citiesDimension.group();
+  let city_names = []
+  citiesGroup.all().forEach(function(item){city_names.push(item.key)})
+  let xScale_ais = d3.scaleOrdinal().domain(city_names)
+  let rChart = dc.rowChart('#feminicides-by-city')
+  rChart
+    .height(400)
     .dimension(citiesDimension)
     .group(citiesGroup)
-    .x(d3.scaleBand().domain(citiesGroup.top(Infinity).map(d => d.key)))
-    .gap(20)
-    .xUnits(dc.units.ordinal)
-    .margins({ top: 0, right: 30, bottom: 100, left: 30 })
-    .height(400)
-    .renderlet(function (chart) {
-                chart.selectAll("g.x text")
-                .attr('dx', '-30')
-                .attr('transform', " translate(0,5) rotate(-45)");
-            });
-
-    barChart.xAxisLabel("Localidade");
-    barChart.yAxisLabel("Taxa");
+    .margins({ top: 20, right: 20, bottom: 40, left: 150 })
+    .x(xScale_ais)
+    .elasticX(true)
+    .colors('#1f77b4')
+    .labelOffsetX(-20)
+    .colorAccessor(function (item) { return item.value;})
+    .on('renderlet', function (chart) {
+                            chart.selectAll("g.row  text")
+                                .style("text-anchor", "end")
+                                .call(function (t) {
+                                    t.each(function (d) {
+                                        var self = d3.select(this);
+                                        var text = self.text();
+                                        if (text.length > 18) {
+                                            self.text('');
+                                            text = text.substring(0, 18) + '..';
+                                            self.text(text);
+                                        }
+                                    })
+                                });
+                        })
 }
 
 function weaponKind(facts) {
   weaponDimension = facts.dimension(d => d['ARMA-UTILZADA']);
   weaponGroup = weaponDimension.group();
-
+  let soma = 0;
+  weaponGroup.all().forEach(function(item){soma=soma+item.value})
   let weapon_scale = d3.scaleOrdinal(['Arma branca', 'Arma de fogo', 'Outros meios'], ['#f8be34','#53A051','#006D9C']);
 
   pieChart = dc.pieChart('#weapon-kind');
@@ -69,7 +81,8 @@ function weaponKind(facts) {
     .group(weaponGroup)
     .height(200)
     .colors(weapon_scale)
-    .legend(dc.legend().highlightSelected(true));
+    .legend(dc.legend().highlightSelected(true))
+    .label(function(d) { return Math.floor(d.value /soma * 100)+"%" });
 }
 
 function weekDay(facts) {
