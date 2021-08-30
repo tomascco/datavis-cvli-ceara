@@ -82,8 +82,15 @@ function weaponKind(facts) {
     .height(200)
     .colors(weapon_scale)
     .legend(dc.legend().highlightSelected(true))
-    .label(function(d) { return Math.floor(d.value /soma * 100)+"%" });
+    .label(function(d) { return Math.floor(d.value /soma * 100)+"%" })
+    .on('preRedraw', function(chart) {
+      let soma =0;
+      weaponDimension.group().all().forEach(function(item){soma=soma+item.value})
+      chart.group(weaponDimension.group())
+       .label(function(d) { return (Math.round(d.value /soma * 100)).toFixed(2)+"%" })
+    })
 }
+
 
 function weekDay(facts) {
   dayDimension = facts.dimension(d => d.day);
