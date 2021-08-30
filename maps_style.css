@@ -63,3 +63,7 @@
 }
 .dc-chart g.row text {fill: black;}
 .dc-chart g.pie-slice {fill: black;}
+
+.dc-chart .pie-slice {
+  fill: black;
+}

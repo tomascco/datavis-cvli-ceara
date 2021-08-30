@@ -93,7 +93,7 @@ function sexKind_ceara(facts) {
   let sexGroup = sexDimension.group();
   let pieChart_sex = dc.pieChart('#gender-controls_ais');
   let soma =0;
-  let colorScale = d3.scaleOrdinal(['Masculino', 'Feminino'], ['#1635c7','#e05353']);
+  let colorScale = d3.scaleOrdinal(['Masculino', 'Feminino'], ['#5f75de','#e05353']);
   sexDimension.group().all().forEach(function(item){soma=soma+item.value})
   pieChart_sex
     .height(200)

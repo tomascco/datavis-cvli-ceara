@@ -41,7 +41,7 @@ function sexKind(facts) {
   let sexGroup = sexDimension.group();
   let pieChart_sex = dc.pieChart('#gender-controls');
   let soma =0;
-  let colorScale = d3.scaleOrdinal(['Masculino', 'Feminino'], ['#1635c7','#e05353']);
+  let colorScale = d3.scaleOrdinal(['Masculino', 'Feminino'], ['#5f75de','#e05353']);
   sexDimension.group().all().forEach(function(item){soma=soma+item.value})
   pieChart_sex
     .height(200)
@@ -256,7 +256,7 @@ async function renderMap(facts) {
       fillColor: crime_scale(map_tax.get(feature.properties.name))
     };
   }
-  
+
 }
 
 async function heatmapgeral(facts){
@@ -318,7 +318,7 @@ async function main_fortaleza() {
         item.dtg = parseDate(item.DATA);
         item.IDADE = parseInt(item.IDADE);
       });
-      
+
       return data;
     })
     .then(data => data.filter(d => typeof(d.IDADE) === 'number' && !isNaN(d.IDADE)))
